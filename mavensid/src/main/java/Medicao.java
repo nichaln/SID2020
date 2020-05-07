@@ -6,17 +6,6 @@ public class Medicao {
 	private int medicaoMovimento;
 	private String date;
 
-	public Medicao(double medicaoTemperatura, double medicaoHumidade, int medicaoLuminosidade, int medicaoMovimento,
-			String date) {
-//		if(medicaoTemperatura-list.getLast()>5) {//e um erro
-//			
-//		}
-		this.medicaoTemperatura = medicaoTemperatura;
-		this.medicaoHumidade = medicaoHumidade;
-		this.medicaoLuminosidade = medicaoLuminosidade;
-		this.medicaoMovimento = medicaoMovimento;
-	}
-
 	public double getMedicaoTemperatura() {
 		return medicaoTemperatura;
 	}
