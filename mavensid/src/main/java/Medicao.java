@@ -1,20 +1,20 @@
 public class Medicao {
 
-	private double medicaoTemperatura;
-	private double medicaoHumidade;
-	private int medicaoLuminosidade;
+	private String medicaoTemperatura;
+	private String medicaoHumidade;
+	private String medicaoLuminosidade;
 	private int medicaoMovimento;
 	private String date;
 
-	public double getMedicaoTemperatura() {
+	public String getMedicaoTemperatura() {
 		return medicaoTemperatura;
 	}
 
-	public double getMedicaoHumidade() {
+	public String getMedicaoHumidade() {
 		return medicaoHumidade;
 	}
 
-	public int getMedicaoLuminosidade() {
+	public String getMedicaoLuminosidade() {
 		return medicaoLuminosidade;
 	}
 
@@ -26,15 +26,15 @@ public class Medicao {
 		return date;
 	}
 
-	public void setMedicaoTemperatura(double medicaoTemperatura) {
+	public void setMedicaoTemperatura(String medicaoTemperatura) {
 		this.medicaoTemperatura = medicaoTemperatura;
 	}
 
-	public void setMedicaoHumidade(double medicaoHumidade) {
+	public void setMedicaoHumidade(String medicaoHumidade) {
 		this.medicaoHumidade = medicaoHumidade;
 	}
 
-	public void setMedicaoLuminosidade(int medicaoLuminosidade) {
+	public void setMedicaoLuminosidade(String medicaoLuminosidade) {
 		this.medicaoLuminosidade = medicaoLuminosidade;
 	}
 

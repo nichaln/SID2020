@@ -1,27 +1,16 @@
 import java.util.LinkedList;
 
-public class SensorToMongo {
+public class SensorToMongo { // este gajo é o primeiro java!
 
-	private LinkedList<Medicao> medicoesAnteriores = new LinkedList<Medicao>();
-	private LinkedList<MedicaoErro> errosTemperatura = new LinkedList<MedicaoErro>();
-	private LinkedList<MedicaoErro> errosHumidade = new LinkedList<MedicaoErro>();
-	private LinkedList<MedicaoErro> errosLuminosidade = new LinkedList<MedicaoErro>();
-	private LinkedList<MedicaoErro> errosMovimento = new LinkedList<MedicaoErro>();
-
-	private LinkedList<Double> mediasTemperatura = new LinkedList<Double>();
-	private LinkedList<Double> mediasHumidade = new LinkedList<Double>();
-	private LinkedList<Double> mediasLuminosidade = new LinkedList<Double>();
+	private LinkedList<Medicao> medicoesAnteriores = new LinkedList<Medicao>(); //leituras todas mesmo
 	
-	private int indexErrosTemperatura=0;
-	private int indexErrosHumidade=0;
-	private int indexErrosLuminosidade=0;
+	private double ultimaMedicaoTemp=Double.POSITIVE_INFINITY;
+	private double ultimaMedicaoHum=Double.POSITIVE_INFINITY;
+	private double ultimaMedicaoLum=Double.POSITIVE_INFINITY;
 	
 	public SensorToMongo() {
 		for(int i =0;i<5;i++) {
 			medicoesAnteriores.add(new Medicao());
-			errosTemperatura.add(new MedicaoErro());
-			errosHumidade.add(new MedicaoErro());
-			errosLuminosidade.add(new MedicaoErro());
 		}
 	}
 	
@@ -35,22 +24,38 @@ public class SensorToMongo {
 		String timestamp = auxTime[2]+"-"+auxTime[1]+"-"+auxTime[0]+" "+parsed[3]; // TODO valor correspondente do timestamp
 		System.out.println(timestamp);
 		
+//		medicoesAnteriores.pop();
 		Medicao m = new Medicao();
-		double leitura;
+		m.setDate(timestamp);
+		
 		int i = 0;
 		for (String s : parsed) {
-			if (i == 0) {
-				if(verify(s, 't', timestamp))
-					m.setMedicaoTemperatura(Double.parseDouble(s));
+			if (i == 0) {//temperatura
+				if(verify(s, 't', timestamp)) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
+					m.setMedicaoTemperatura(""+Double.parseDouble(s));
+					//TODO Escrever na coleçao mongoDB
+				}else { //ser string ou valor elevado
+					m.setMedicaoTemperatura(s);
+				}
 			}
-			if (i == 1) {
-				if(verify(s, 'h', timestamp))
-					m.setMedicaoHumidade(Double.parseDouble(s));
+			if (i == 1) {//humidade
+				if(verify(s, 'h', timestamp)) {
+					m.setMedicaoHumidade(""+Double.parseDouble(s));
+					//TODO escrever na colecao mongoDB
+				}else {
+					m.setMedicaoHumidade(s);
+				}
+					
 			}
 			// TODO Parse data
-			if (i == 3) {
-				if(verify(s, 'c', timestamp))
-					m.setMedicaoTemperatura(Double.parseDouble(s));
+			if (i == 4) {//luminosidade
+				if(verify(s, 'c', timestamp)) {
+					m.setMedicaoLuminosidade(""+Integer.parseInt(s));
+					//TODO escrever na colecao mongoDB
+				}else {
+					m.setMedicaoLuminosidade(s);
+				}
+					
 			}
 			/*if (i == 3) {
 				if(verify(s, 't', timestamp))
@@ -60,6 +65,10 @@ public class SensorToMongo {
 			i++;
 
 		}
+		medicoesAnteriores.add(m);
+		medicoesAnteriores.pop();
+		for(Medicao x :medicoesAnteriores)
+			System.out.println(x.getDate()+" || "+x.getMedicaoTemperatura()+" || "+x.getMedicaoHumidade()+" || "+x.getMedicaoLuminosidade());
 
 	}
 
@@ -70,20 +79,12 @@ public class SensorToMongo {
 			try {
 				leitura = Double.parseDouble(aux);
 			} catch (NumberFormatException e) {// escreve nos erros
-//				MedicaoErro me = new MedicaoErro(aux, timestamp, historyTemperatura());
-				errosTemperatura.get(indexErrosTemperatura).setLeitura(aux);
-				errosTemperatura.get(indexErrosTemperatura).setTimestamp(timestamp);
-				errosTemperatura.get(indexErrosTemperatura).setLeiturasAnteriores(historyTemperatura());
-				errosTemperatura.addLast(errosTemperatura.poll());
-				indexErrosTemperatura++;//este vai ter de ser reset algures?
-				
-				/*
-				 * TODO mandar esta me para o spot de guardar, na coleção ErrosMedicoesSensores do MongoDB
-				 */
+				/*ESCREVER A CENA NA COLEÇAO ERROSMEDICOESSENSORES DO MONGODB*/
 
 				return false;
 			}
-			if (checkValues(leitura)) {// TODO espetáculo regista aí
+			if (checkValidValueTemperatura(leitura)) {// TODO espetáculo regista aí
+				ultimaMedicaoTemp = leitura;
 				return true;
 			} else {// fora da graça de deus
 //				MedicaoErro me = new MedicaoErro(aux, timestamp, historyTemperatura());
@@ -105,7 +106,7 @@ public class SensorToMongo {
 	private LinkedList<MedicaoErroValores> historyTemperatura() {
 		LinkedList<MedicaoErroValores> historico = new LinkedList<MedicaoErroValores>();
 		for (Medicao m : medicoesAnteriores) {
-			historico.add(new MedicaoErroValores(m.getMedicaoTemperatura(), m.getDate()));
+//			historico.add(new MedicaoErroValores(m.getMedicaoTemperatura(), m.getDate()));
 		}
 		return historico;
 	}
@@ -113,7 +114,7 @@ public class SensorToMongo {
 	private LinkedList<MedicaoErroValores> historyHumidade() {
 		LinkedList<MedicaoErroValores> historico = new LinkedList<MedicaoErroValores>();
 		for (Medicao m : medicoesAnteriores) {
-			historico.add(new MedicaoErroValores(m.getMedicaoHumidade(), m.getDate()));
+//			historico.add(new MedicaoErroValores(m.getMedicaoHumidade(), m.getDate()));
 		}
 		return historico;
 	}
@@ -121,29 +122,31 @@ public class SensorToMongo {
 	private LinkedList<MedicaoErroValores> historyLuminosidade() {
 		LinkedList<MedicaoErroValores> historico = new LinkedList<MedicaoErroValores>();
 		for (Medicao m : medicoesAnteriores) {
-			historico.add(new MedicaoErroValores(m.getMedicaoLuminosidade(), m.getDate()));
+//			historico.add(new MedicaoErroValores(m.getMedicaoLuminosidade(), m.getDate()));
 		}
 		return historico;
 	}
 
-	private boolean checkValues(Double leitura) {
-		if (leitura > 20564) { // Comparação do demónio
-			return true;
-		} else {
+	private boolean checkValidValueTemperatura(Double leitura) {
+		if(leitura-ultimaMedicaoTemp > 5) {// este 5 tem de ser falado
+			// aconteceu um erro de leitura elevada
 			return false;
 		}
-
+		else {
+			return true;
+		}
 	}
 
 	public static void main(String[] args) {
-		String a = "";
-		String b = null;
-		if(a.equals(b)) {
-			System.out.println("SIM");
-		}
-		else {
-			System.out.println("NAO");
-		}
+		LinkedList<Integer> aa = new LinkedList<Integer>();
+		System.out.println(aa);
+		aa.add(1);
+		System.out.println(aa);
+		aa.add(2);
+		System.out.println(aa);
+		int a =aa.pop();
+		System.out.println(aa);
+		
 	}
 
 }

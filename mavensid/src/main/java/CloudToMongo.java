@@ -24,6 +24,7 @@ public class CloudToMongo implements MqttCallback {
     static String mongo_host = new String();
     static String mongo_database = new String();
     static String mongo_collection = new String();
+    SensorToMongo s = new SensorToMongo();
 
     public static void main(String[] args) {
 
@@ -66,7 +67,7 @@ public class CloudToMongo implements MqttCallback {
     
     public void messageArrived(String topic, MqttMessage c)
             throws Exception {
-    	SensorToMongo s = new SensorToMongo();
+    	
         try {
                 DBObject document_json;
 
