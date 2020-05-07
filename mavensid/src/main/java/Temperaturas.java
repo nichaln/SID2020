@@ -32,8 +32,7 @@ public class Temperaturas {
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
 	}
-	
-	
+		
 	private void start() {
 		Scanner in = new Scanner(System.in);
 		for(int i=0;i<5;i++) {
