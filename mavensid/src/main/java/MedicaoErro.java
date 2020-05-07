@@ -6,11 +6,11 @@ public class MedicaoErro {
 	private String timestamp;
 	private LinkedList<MedicaoErroValores> leiturasAnteriores= new LinkedList<MedicaoErroValores>();
 	
-	public MedicaoErro(String leitura, String timestamp, LinkedList<MedicaoErroValores> leiturasAnteriores) {
+	public MedicaoErro() {
 		super();
-		this.leitura = leitura;
-		this.timestamp = timestamp;
-		this.leiturasAnteriores = leiturasAnteriores;
+		this.leitura = null;
+		this.timestamp = null;
+		this.leiturasAnteriores = null;
 	}
 
 	public String getLeitura() {
