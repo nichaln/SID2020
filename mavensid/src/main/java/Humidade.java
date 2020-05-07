@@ -18,12 +18,14 @@ public class Humidade {
 		return sum/mediasAnteriores.size();
 	}
 	
-	private void processar(double num) {
+	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
 		double media5InstantesAntes = mediasAnteriores.poll();
 		double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 		if(calc >= limiteHumidade) {
-			System.err.println("Alerta Vermelho!!!");
+			System.err.println("Alerta Vermelho - Muita húmido!!!");
+			
+			// TODO Alerta da humidade
 		}
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);

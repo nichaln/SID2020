@@ -11,51 +11,51 @@ public class SensorToMongo {
 	private LinkedList<Double> mediasTemperatura = new LinkedList<Double>();
 	private LinkedList<Double> mediasHumidade = new LinkedList<Double>();
 	private LinkedList<Double> mediasLuminosidade = new LinkedList<Double>();
-	
-	private int indexErrosTemperatura=0;
-	private int indexErrosHumidade=0;
-	private int indexErrosLuminosidade=0;
-	
+
+	private int indexErrosTemperatura = 0;
+	private int indexErrosHumidade = 0;
+	private int indexErrosLuminosidade = 0;
+
 	public SensorToMongo() {
-		for(int i =0;i<5;i++) {
+		for (int i = 0; i < 5; i++) {
 			medicoesAnteriores.add(new Medicao());
 			errosTemperatura.add(new MedicaoErro());
 			errosHumidade.add(new MedicaoErro());
 			errosLuminosidade.add(new MedicaoErro());
 		}
 	}
-	
+
 	public void receberMensagem(String mensagem) {
 		String[] vetor = mensagem.split(",");
 		String[] parsed = new String[vetor.length];
 		for (int i = 0; i != vetor.length; i++) {
 			parsed[i] = vetor[i].split("\":\"")[1].replaceAll("\"", "");
 		}
-		String [] auxTime = parsed[2].split("/");
-		String timestamp = auxTime[2]+"-"+auxTime[1]+"-"+auxTime[0]+" "+parsed[3]; // TODO valor correspondente do timestamp
+		String[] auxTime = parsed[2].split("/");
+		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3]; // TODO valor correspondente do timestamp
 		System.out.println(timestamp);
-		
+
 		Medicao m = new Medicao();
 		double leitura;
 		int i = 0;
 		for (String s : parsed) {
 			if (i == 0) {
-				if(verify(s, 't', timestamp))
+				if (verify(s, 't', timestamp))
 					m.setMedicaoTemperatura(Double.parseDouble(s));
 			}
 			if (i == 1) {
-				if(verify(s, 'h', timestamp))
+				if (verify(s, 'h', timestamp))
 					m.setMedicaoHumidade(Double.parseDouble(s));
 			}
 			// TODO Parse data
 			if (i == 3) {
-				if(verify(s, 'c', timestamp))
+				if (verify(s, 'c', timestamp))
 					m.setMedicaoTemperatura(Double.parseDouble(s));
 			}
-			/*if (i == 3) {
-				if(verify(s, 't', timestamp))
-					m.setMedicaoTemperatura(Double.parseDouble(s));
-			}*/
+			/*
+			 * if (i == 3) { if(verify(s, 't', timestamp))
+			 * m.setMedicaoTemperatura(Double.parseDouble(s)); }
+			 */
 
 			i++;
 
@@ -75,10 +75,11 @@ public class SensorToMongo {
 				errosTemperatura.get(indexErrosTemperatura).setTimestamp(timestamp);
 				errosTemperatura.get(indexErrosTemperatura).setLeiturasAnteriores(historyTemperatura());
 				errosTemperatura.addLast(errosTemperatura.poll());
-				indexErrosTemperatura++;//este vai ter de ser reset algures?
-				
+				indexErrosTemperatura++;// este vai ter de ser reset algures?
+
 				/*
-				 * TODO mandar esta me para o spot de guardar, na coleção ErrosMedicoesSensores do MongoDB
+				 * TODO mandar esta me para o spot de guardar, na coleção ErrosMedicoesSensores
+				 * do MongoDB
 				 */
 
 				return false;
@@ -87,7 +88,7 @@ public class SensorToMongo {
 				return true;
 			} else {// fora da graça de deus
 //				MedicaoErro me = new MedicaoErro(aux, timestamp, historyTemperatura());
-				
+
 				/*
 				 * TODO mandar esta me para o spot de guardar
 				 */
@@ -98,7 +99,7 @@ public class SensorToMongo {
 		case 'c':
 		default:
 			return false;
-			
+
 		}
 	}
 
@@ -109,7 +110,7 @@ public class SensorToMongo {
 		}
 		return historico;
 	}
-	
+
 	private LinkedList<MedicaoErroValores> historyHumidade() {
 		LinkedList<MedicaoErroValores> historico = new LinkedList<MedicaoErroValores>();
 		for (Medicao m : medicoesAnteriores) {
@@ -117,7 +118,7 @@ public class SensorToMongo {
 		}
 		return historico;
 	}
-	
+
 	private LinkedList<MedicaoErroValores> historyLuminosidade() {
 		LinkedList<MedicaoErroValores> historico = new LinkedList<MedicaoErroValores>();
 		for (Medicao m : medicoesAnteriores) {
@@ -138,10 +139,9 @@ public class SensorToMongo {
 	public static void main(String[] args) {
 		String a = "";
 		String b = null;
-		if(a.equals(b)) {
+		if (a.equals(b)) {
 			System.out.println("SIM");
-		}
-		else {
+		} else {
 			System.out.println("NAO");
 		}
 	}

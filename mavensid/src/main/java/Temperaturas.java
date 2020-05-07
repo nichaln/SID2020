@@ -18,15 +18,19 @@ public class Temperaturas {
 		return sum/mediasAnteriores.size();
 	}
 	
-	private void processar(double num) {
+	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
 		double media5InstantesAntes = mediasAnteriores.poll();
 		double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 		if(calc >= limiteTempSup) {
 			System.err.println("Alerta Temperatura a aumentar!!!");
+			
+			// TODO Alerta Temp alta
 		}
 		if(calc <= limiteTempInf) {
 			System.err.println("Alerta Temperatura a diminuir!!!");
+			
+			// TODO Alerta Temp baixa
 		}
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
