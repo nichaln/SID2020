@@ -10,9 +10,9 @@ public class MongoToMySQL {
 	
 	public void separarMedicoes() {
 		for(Medicao ms : medicoesSensores) {
-			t.processar(ms.getMedicaoTemperatura());
-			h.processar(ms.getMedicaoTemperatura());
-			l.processar(ms.getMedicaoTemperatura());
+			t.processar(Double.parseDouble(ms.getMedicaoTemperatura()));
+			h.processar(Double.parseDouble(ms.getMedicaoHumidade()));
+			l.processar(Integer.parseInt(ms.getMedicaoTemperatura()));
 //			m.processar(ms.getMedicaoTemperatura());
 
 		}
