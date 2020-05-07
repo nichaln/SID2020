@@ -1,13 +1,13 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 
-public class Luminosidade {
-	
+public class Movimento {
 	LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
-	double limiteLuminosidade=1000;
 	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
+	
+	double limiteMovSup=100; // ?????????
+
 	
 	private double calcularMediaAnterior() {
 		double sum=0;
@@ -22,37 +22,11 @@ public class Luminosidade {
 		double mediaAnterior = calcularMediaAnterior();
 		double media5InstantesAntes = mediasAnteriores.poll();
 		double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
-		if(calc >= limiteLuminosidade) {
-			System.err.println("Alerta Vermelho - Bué da luz!!!");
+		if(calc >= limiteMovSup) {
+			System.err.println("Alerta Movimentos para xuxu!!!");
 		}
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
 	}
-	
-	
-	private void start() {
-		Scanner in = new Scanner(System.in);
-		for(int i=0;i<5;i++) {
-			System.out.println("Escreva a medicao:\n");
-			double a = in.nextDouble();
-			System.out.println("Medicao lida:"+  a + "\n");
-			valoresRecebidos.addLast(a);
-			System.out.println("Escreva a media:\n");
-			a = in.nextDouble();
-			System.out.println("Media lida:"+ a + "\n");
-			mediasAnteriores.addLast(a);
-		}
-		while (true) {
-			System.out.println("Proxima medicao sensor\n");
-			double num = in.nextDouble();
-			processar(num);
-		}
-	}
-	
-	public static void main(String[] args) {
-		Luminosidade t = new Luminosidade();
-		t.start();
-	}
-
 }
