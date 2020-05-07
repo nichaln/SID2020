@@ -39,7 +39,7 @@ public class CloudToMongo implements MqttCallback {
         } catch (Exception e) {
 
             System.out.println("Error reading CloudToMongo.ini file " + e);
-            JOptionPane.showMessageDialog(null, "The CloudToMongo.inifile wasn't found.", "CloudToMongo", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "The CloudToMongo.ini file wasn't found.", "CloudToMongo", JOptionPane.ERROR_MESSAGE);
         }
         new CloudToMongo().connecCloud();
         new CloudToMongo().connectMongo();

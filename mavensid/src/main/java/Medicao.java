@@ -3,7 +3,7 @@ public class Medicao {
 	private String medicaoTemperatura;
 	private String medicaoHumidade;
 	private String medicaoLuminosidade;
-	private int medicaoMovimento;
+	private String medicaoMovimento;
 	private String date;
 
 	public String getMedicaoTemperatura() {
@@ -18,7 +18,7 @@ public class Medicao {
 		return medicaoLuminosidade;
 	}
 
-	public int getMedicaoMovimento() {
+	public String getMedicaoMovimento() {
 		return medicaoMovimento;
 	}
 
@@ -38,7 +38,7 @@ public class Medicao {
 		this.medicaoLuminosidade = medicaoLuminosidade;
 	}
 
-	public void setMedicaoMovimento(int medicaoMovimento) {
+	public void setMedicaoMovimento(String medicaoMovimento) {
 		this.medicaoMovimento = medicaoMovimento;
 	}
 
