@@ -6,8 +6,9 @@ public class Temperaturas {
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
 	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
-	double limiteTempSup=50;
+	double limiteTempSup=45;
 	double limiteTempInf=0;/**ACABAR ISTO COM UMA FORMULA MANHOSA**/
+	int contador=0;
 	
 	private double calcularMediaAnterior() {
 		double sum=0;
@@ -20,18 +21,23 @@ public class Temperaturas {
 	
 	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
-		double media5InstantesAntes = mediasAnteriores.poll();
-		double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
+		double media3InstantesAntes = mediasAnteriores.poll();
+		double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
+		double calcneg = (media3InstantesAntes-mediaAnterior) * variavel + num;
 		if(calc >= limiteTempSup) {
-			System.err.println("Alerta Temperatura a aumentar!!!");
-			
+			if(contador==0) {
+				System.err.println("Alerta Temperatura a aumentar!!!");
+				contador=8;
+			}
 			// TODO Alerta Temp alta
 		}
-		if(calc <= limiteTempInf) {
+		if(calcneg <= limiteTempInf) {
 			System.err.println("Alerta Temperatura a diminuir!!!");
 			
 			// TODO Alerta Temp baixa
 		}
+		if(contador>0)
+			contador--;
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
@@ -39,7 +45,7 @@ public class Temperaturas {
 		
 	private void start() {
 		Scanner in = new Scanner(System.in);
-		for(int i=0;i<5;i++) {
+		for(int i=0;i<3;i++) {
 			System.out.println("Escreva a medicao:\n");
 			double a = in.nextDouble();
 			System.out.println("Medicao lida:"+  a + "\n");

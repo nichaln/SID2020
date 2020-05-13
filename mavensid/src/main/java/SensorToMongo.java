@@ -24,7 +24,7 @@ public class SensorToMongo { // este gajo é o primeiro java!
 		String timestamp = auxTime[2]+"-"+auxTime[1]+"-"+auxTime[0]+" "+parsed[3]; // TODO valor correspondente do timestamp
 		System.out.println(timestamp);
 		
-//		medicoesAnteriores.pop();
+		medicoesAnteriores.pop();
 		Medicao m = new Medicao();
 		m.setDate(timestamp);
 		
@@ -34,6 +34,7 @@ public class SensorToMongo { // este gajo é o primeiro java!
 				if(verify(s, 't', timestamp)) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
 					m.setMedicaoTemperatura(""+Double.parseDouble(s));
 					//TODO Escrever na coleçao mongoDB
+					
 				}else { //ser string ou valor elevado
 					m.setMedicaoTemperatura(s);
 				}
@@ -66,7 +67,6 @@ public class SensorToMongo { // este gajo é o primeiro java!
 
 		}
 		medicoesAnteriores.add(m);
-		medicoesAnteriores.pop();
 		for(Medicao x :medicoesAnteriores)
 			System.out.println(x.getDate()+" || "+x.getMedicaoTemperatura()+" || "+x.getMedicaoHumidade()+" || "+x.getMedicaoLuminosidade());
 
