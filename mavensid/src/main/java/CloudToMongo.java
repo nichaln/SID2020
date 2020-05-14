@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Random;
@@ -33,6 +34,10 @@ public class CloudToMongo implements MqttCallback {
 	static String mongo_collection_medicoes = new String();
 	static String mongo_collection_erros = new String();
 	private LinkedList<Medicao> medicoesAnteriores = new LinkedList<Medicao>(); // leituras todas mesmo
+	
+	private static final double VARIACAO_MAXIMA_TEMPERATURA = 5;
+	private static final double VARIACAO_MAXIMA_HUMIDADE = 4;
+	private static final double VARIACAO_MAXIMA_LUMINOSIDADE = 100;
 
 	private double ultimaMedicaoTemp = Double.POSITIVE_INFINITY;
 	private double ultimaMedicaoHum = Double.POSITIVE_INFINITY;
@@ -61,6 +66,7 @@ public class CloudToMongo implements MqttCallback {
 		}
 		new CloudToMongo().connecCloud();
 		new CloudToMongo().connectMongo();
+		
 	}
 
 	public void connecCloud() {
@@ -82,6 +88,9 @@ public class CloudToMongo implements MqttCallback {
 		db = mongoClient.getDB(mongo_database);
 		mongocolmedicoes = db.getCollection(mongo_collection_medicoes);
 		mongocolerros = db.getCollection(mongo_collection_erros);
+		errosRajadaTemp=0;
+		errosRajadaHum=0;
+		errosRajadaLum=0;
 	}
 
 	public void messageArrived(String topic, MqttMessage c) throws Exception {
@@ -123,54 +132,103 @@ public class CloudToMongo implements MqttCallback {
 		}
 		String[] auxTime = parsed[2].split("/");
 		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3]; // TODO valor
-																								// correspondente do
+									//2020-05-14 14:25:1										// correspondente do
 																								// timestamp
 		System.out.println(timestamp);
 
 		
 		Medicao m = new Medicao();
 		m.setDate(timestamp);
+		
+		boolean dataValida=true;
+		/* ver se a data é maior do que da medicao anterior */
+		Date data = new Date(Integer.parseInt(auxTime[2]), Integer.parseInt(auxTime[1]), Integer.parseInt(auxTime[2]),Integer.parseInt(parsed[3].split(":")[0]),
+				Integer.parseInt(parsed[3].split(":")[1]),Integer.parseInt(parsed[3].split(":")[2]));
+		String dataAnterior = medicoesAnteriores.peekLast().getDate();
 
 		int i = 0;
 		for (String s : parsed) {
 			if (i == 0) {// temperatura
-				if (verify(s, 't', timestamp)) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
+				if (verify(s, 't', timestamp) && dataValida) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
 					m.setMedicaoTemperatura("" + Double.parseDouble(s));
-					// TODO Escrever na coleçao mongoDB
-					BasicDBObject document = new BasicDBObject();
+					BasicDBObject document = new BasicDBObject();//não passar para cima por causa do ObjectId
 					document.put("TipoSensor", "TEM");
 					document.put("ValorMedicao",Double.parseDouble(s));
 					document.put("DataHoraMedicao", timestamp);
 					mongocolmedicoes.insert(document);
-
 				} else { // ser string ou valor elevado
 					m.setMedicaoTemperatura(s);
+					BasicDBObject document = new BasicDBObject();
+					document.put("ValorMedicao", s);
+					document.put("TipoSensor", "TEM");
+					document.put("DataHoraMedicao", timestamp);
+					ArrayList< DBObject > array = historyTemperatura();
+					document.put("ValoresAnteriores", array);
+					mongocolerros.insert(document);
+					
 				}
 			}
 			if (i == 1) {// humidade
-				if (verify(s, 'h', timestamp)) {
+				if (verify(s, 'h', timestamp) && dataValida) {
 					m.setMedicaoHumidade("" + Double.parseDouble(s));
-					// TODO escrever na colecao mongoDB
+					BasicDBObject document = new BasicDBObject();//não passar para cima por causa do ObjectId
+					document.put("TipoSensor", "HUM");
+					document.put("ValorMedicao",Double.parseDouble(s));
+					document.put("DataHoraMedicao", timestamp);
+					mongocolmedicoes.insert(document);
 				} else {
 					m.setMedicaoHumidade(s);
+					BasicDBObject document = new BasicDBObject();
+					document.put("ValorMedicao", s);
+					document.put("TipoSensor", "HUM");
+					document.put("DataHoraMedicao", timestamp);
+					ArrayList< DBObject > array = historyHumidade();
+					document.put("ValoresAnteriores", array);
+					mongocolerros.insert(document);
 				}
 
 			}
 			// TODO Parse data
 			if (i == 4) {// luminosidade
-				if (verify(s, 'c', timestamp)) {
+				if (verify(s, 'c', timestamp) && dataValida) {
 					m.setMedicaoLuminosidade("" + Integer.parseInt(s));
-					// TODO escrever na colecao mongoDB
+					BasicDBObject document = new BasicDBObject();//não passar para cima por causa do ObjectId
+					document.put("TipoSensor", "CEL");
+					document.put("ValorMedicao",Integer.parseInt(s));
+					document.put("DataHoraMedicao", timestamp);
+					mongocolmedicoes.insert(document);
 				} else {
 					m.setMedicaoLuminosidade(s);
+					BasicDBObject document = new BasicDBObject();
+					document.put("ValorMedicao", s);
+					document.put("TipoSensor", "CEL");
+					document.put("DataHoraMedicao", timestamp);
+					ArrayList< DBObject > array = historyLuminosidade();
+					document.put("ValoresAnteriores", array);
+					mongocolerros.insert(document);
 				}
 
 			}
-			/*
-			 * if (i == 3) { if(verify(s, 't', timestamp))
-			 * m.setMedicaoTemperatura(Double.parseDouble(s)); }
-			 */
-
+			if(i==5) {
+				if(verify(s,'m',timestamp) && dataValida) {
+					m.setMedicaoMovimento("" + Integer.parseInt(s));
+					BasicDBObject document = new BasicDBObject();//não passar para cima por causa do ObjectId
+					document.put("TipoSensor", "MOV");
+					document.put("ValorMedicao",Integer.parseInt(s));
+					document.put("DataHoraMedicao", timestamp);
+					mongocolmedicoes.insert(document);
+				}else {
+					m.setMedicaoMovimento(s);
+					BasicDBObject document = new BasicDBObject();
+					document.put("ValorMedicao", s);
+					document.put("TipoSensor", "MOV");
+					document.put("DataHoraMedicao", timestamp);
+					ArrayList< DBObject > array = historyMovimento();
+					document.put("ValoresAnteriores", array);
+					mongocolerros.insert(document);
+				}
+			}
+			
 			i++;
 
 		}
@@ -183,38 +241,64 @@ public class CloudToMongo implements MqttCallback {
 	}
 
 	private boolean verify(String aux, char key, String timestamp) {
+		double leitura;
 		switch (key) {
 		case 't':
-			double leitura;
 			try {
 				leitura = Double.parseDouble(aux);
 			} catch (NumberFormatException e) {// escreve nos erros
-				/* ESCREVER A CENA NA COLEÇAO ERROSMEDICOESSENSORES DO MONGODB */
-				BasicDBObject document = new BasicDBObject();
-				document.put("ValorMedicao", aux);
-				document.put("TipoSensor", "TEM");
-				document.put("DataHoraMedicao", timestamp);
-				ArrayList< DBObject > array = historyTemperatura();
-				document.put("ValoresAnteriores", array);
-				
-				mongocolerros.insert(document);
-
+				errosRajadaTemp++;
 				return false;
 			}
 			if (checkValidValueTemperatura(leitura)) {// TODO espetáculo regista aí
 				ultimaMedicaoTemp = leitura;
+				errosRajadaTemp = 0;
 				return true;
-			} else {// fora da graça de deus
-//				MedicaoErro me = new MedicaoErro(aux, timestamp, historyTemperatura());
-
-				/*
-				 * TODO mandar esta me para o spot de guardar
-				 */
+			} else {// 
+				errosRajadaTemp++;
+				return false;
+			}				
+		case 'h':
+			try {
+				leitura = Double.parseDouble(aux);
+			} catch (NumberFormatException e) {// escreve nos erros
+				errosRajadaHum++;
 				return false;
 			}
-//				
-		case 'h':
+			if (checkValidValueHumidade(leitura)) {// TODO espetáculo regista aí
+				ultimaMedicaoHum = leitura;
+				errosRajadaHum = 0;
+				return true;
+			} else {// 
+				errosRajadaHum++;
+				return false;
+			}
 		case 'c':
+			try {
+				leitura = Double.parseDouble(aux);
+			} catch (NumberFormatException e) {// escreve nos erros
+				errosRajadaLum++;
+				return false;
+			}
+			if (checkValidValueLuminosidade(leitura)) {// TODO espetáculo regista aí
+				ultimaMedicaoLum = leitura;
+				errosRajadaLum = 0;
+				return true;
+			} else {// 
+				errosRajadaLum++;
+				return false;
+			}
+		case 'm':
+			try {
+				leitura = Double.parseDouble(aux);
+			} catch (NumberFormatException e) {// escreve nos erros
+				return false;
+			}
+			if (leitura == 0 || leitura == 1) {// TODO espetáculo regista aí
+				return true;
+			} else {// 
+				return false;
+			}
 		default:
 			return false;
 
@@ -264,9 +348,35 @@ public class CloudToMongo implements MqttCallback {
 		}
 		return historico;
 	}
+	
+	private ArrayList<DBObject> historyMovimento() {
+		ArrayList<DBObject> historico = new ArrayList<DBObject>();
+		for (Medicao m : medicoesAnteriores) {
+			historico.add(new AuxValoresAnteriores(m.getMedicaoMovimento(),m.getDate()).convertBson());
+		}
+		return historico;
+	}
 
 	private boolean checkValidValueTemperatura(Double leitura) {
-		if (leitura - ultimaMedicaoTemp > 5) {// este 5 tem de ser falado
+		if (Math.abs(leitura - ultimaMedicaoTemp) > VARIACAO_MAXIMA_TEMPERATURA + VARIACAO_MAXIMA_TEMPERATURA * errosRajadaTemp ) {// este 5 tem de ser falado
+			// aconteceu um erro de leitura elevada
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private boolean checkValidValueHumidade(Double leitura) {
+		if (Math.abs(leitura - ultimaMedicaoHum) > VARIACAO_MAXIMA_HUMIDADE + VARIACAO_MAXIMA_HUMIDADE * errosRajadaHum ) {// este 5 tem de ser falado
+			// aconteceu um erro de leitura elevada
+			return false;
+		} else {
+			return true;
+		}
+	}
+	
+	private boolean checkValidValueLuminosidade(Double leitura) {
+		if (Math.abs(leitura - ultimaMedicaoLum) > VARIACAO_MAXIMA_LUMINOSIDADE + VARIACAO_MAXIMA_LUMINOSIDADE * errosRajadaHum ) {// este 5 tem de ser falado
 			// aconteceu um erro de leitura elevada
 			return false;
 		} else {
