@@ -6,6 +6,7 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import com.mongodb.*;
+import java.text.*;
 
 public class MongoToMySQL {
 
@@ -14,15 +15,15 @@ public class MongoToMySQL {
 	Humidade h = new Humidade();
 	Luminosidade l = new Luminosidade();
 	Movimento m = new Movimento();
-	
+
 	static String mongo_host = new String();
 	static String mongo_database = new String();
 	static String mongo_collection = new String();
 	DBCollection medicoes;
-	
+
 	static Connection SQLconn;
 	static Statement SQLstatement;
-	
+
 	public void connectToMongo() {
 		try {
 			Properties p = new Properties();
@@ -37,8 +38,7 @@ public class MongoToMySQL {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
-		MongoClient mongoClient1 = new MongoClient(
-				new MongoClientURI(mongo_host)); // ?
+		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host)); // ?
 
 		DB db = mongoClient1.getDB(mongo_database);
 		medicoes = db.getCollection(mongo_collection); // Coleção das Medições
@@ -52,7 +52,7 @@ public class MongoToMySQL {
 		sql_password = "pass";
 		sql_user = "transporter";
 		sql_connection = "jdbc:mysql://localhost/museu_teste";
-		
+
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			SQLconn = DriverManager.getConnection(sql_connection + "?user=" + sql_user + "&password=" + sql_password);
@@ -60,38 +60,44 @@ public class MongoToMySQL {
 		} catch (Exception e) {
 			System.out.println("Server down, unable to make the connection. ");
 		}
+
+	}
+
+	public void readFromMongo() {
+		DBCursor cursor = medicoes.find();
+		int i = 0;
+		while (cursor.hasNext()) {
+			String read = cursor.next().toString();
+			System.out.println(read);
+			String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor")).split(": ")[1].replace("\"","");
+			Double ValorMedicao = Double.parseDouble(read.substring(read.indexOf("ValorMedicao\": "), read.indexOf(", \"Data")).split(":")[1]);
+			int id = i;
+			i++;
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date(System.currentTimeMillis());
+			String DataHoraMedicao = formatter.format(date);
+			System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
+			writeToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);	
+		}
+		
+
+	}
+
+	public void writeToMySQL(int id, Double valorMedicao, String tipoSensor, String dataHoraMedicao) {
 		ResultSet rs;
 		try {
 			SQLstatement = SQLconn.createStatement();
-		rs = SQLstatement.executeQuery("Select * from alerta");
-		while(rs.next())
-			System.out.println(rs.getString("Descricao"));
-		} catch(Exception e) {
+			/*rs = SQLstatement.executeQuery("Select * from alerta");
+			while (rs.next())
+				System.out.println(rs.getString("Descricao"));*/
+
+			SQLstatement.executeUpdate("Insert into medicoessensores (IDMedicao, ValorMedicao, TipoSensor, DataHoraMedicao)"
+					+ " values (" + id + ", "+ valorMedicao + ", '" + tipoSensor + "', '" + dataHoraMedicao + "');");
+		} catch (Exception e) {
 			System.out.println("Error quering  the database . " + e);
 		}
-		
-		
-	}
-	
-	public void readFromMongo() {
-		DBCursor cursor = medicoes.find();
-		while (cursor.hasNext()) {
-			DBObject read = cursor.next();
-			System.out.println(read);
-			/*
-			 *  TODO Lidar com medições - enfiar os gajos no medicoesSensores
-			 *  Dar parse ao gajo para o tornar uma cena que se enfie lá
-			 *  https://stackoverflow.com/questions/20901837/converting-dbobject-to-java-object-while-retrieve-values-from-mongodb/20902402
-			 */
-		//	medicoesSensores.add((Medicao) read); // Não é assim
-		}
 
 	}
-	
-	public void writeToMySQL() {
-		
-	}
-
 
 	public void separarMedicoes() {
 		for (Medicao ms : medicoesSensores) {
@@ -102,9 +108,12 @@ public class MongoToMySQL {
 
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		new MongoToMySQL().connectToMySQL();
+		MongoToMySQL m = new MongoToMySQL();
+		m.connectToMongo();
+		m.connectToMySQL();
+		m.readFromMongo();
 	}
 
 }
