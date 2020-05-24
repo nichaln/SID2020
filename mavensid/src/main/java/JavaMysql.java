@@ -15,17 +15,17 @@ public class JavaMysql {
 		
 		String SqlCommando = new String();
 		int result;
-		String database_password = new String();
-		String database_user = new String();
-		String database_connection = new String();
+		String sql_password = new String();
+		String sql_user = new String();
+		String sql_connection = new String();
 		int maxIdCliente = 0;
-		database_password = "senha123";
-		database_user = "root";
-		database_connection = "jdbc:mysql://localhost/museu_teste";
+		sql_password = "pass";
+		sql_user = "transporter";
+		sql_connection = "jdbc:mysql://localhost/museu_teste";
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
-			conn = DriverManager.getConnection(database_connection + "?user=" + database_user + "&password=" + database_password);
+			conn = DriverManager.getConnection(sql_connection + "?user=" + sql_user + "&password=" + sql_password);
 			System.out.println("passou");
 		} catch (Exception e) {
 			System.out.println("Server down, unable to make the connection. ");
