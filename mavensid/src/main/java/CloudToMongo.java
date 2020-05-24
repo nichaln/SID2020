@@ -100,8 +100,8 @@ public class CloudToMongo implements MqttCallback {
 
 //			document_json = (DBObject) JSON.parse(clean(c.toString()));
 //			System.out.println(c.toString());
-//			receberMensagem(c.toString());
-			metodoAuxiliar(c.toString());
+			receberMensagem(c.toString());
+//			metodoAuxiliar(c.toString());
 //			mongocol.insert(document_json);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -152,21 +152,21 @@ public class CloudToMongo implements MqttCallback {
 		m.setDate(timestamp);
 		
 		boolean dataValida=true;
-		/* ver se a data é maior do que da medicao anterior */
-		Date data = new Date(Integer.parseInt(auxTime[2]), Integer.parseInt(auxTime[1]), Integer.parseInt(auxTime[2]),
-				Integer.parseInt(parsed[3].split(":")[0]),Integer.parseInt(parsed[3].split(":")[1]),Integer.parseInt(parsed[3].split(":")[2]));
-		
-		String dataAnterior = medicoesAnteriores.peekLast().getDate();
-		if(dataAnterior!=null) {
-			String [] parsedAux = dataAnterior.split(" ");
-			Date data2 = new Date(Integer.parseInt(parsedAux[0].split("-")[0]),Integer.parseInt(parsedAux[0].split("-")[1]),
-					Integer.parseInt(parsedAux[0].split("-")[2]),Integer.parseInt(parsedAux[1].split(":")[0]),
-					Integer.parseInt(parsedAux[1].split("-")[1]),Integer.parseInt(parsedAux[1].split("-")[2]));
-		
-			if(!data.after(data2)) {
-				dataValida=false;
-			}
-		}
+//		/* ver se a data é maior do que da medicao anterior */
+//		Date data = new Date(Integer.parseInt(auxTime[2]), Integer.parseInt(auxTime[1]), Integer.parseInt(auxTime[2]),
+//				Integer.parseInt(parsed[3].split(":")[0]),Integer.parseInt(parsed[3].split(":")[1]),Integer.parseInt(parsed[3].split(":")[2]));
+//		
+//		String dataAnterior = medicoesAnteriores.peekLast().getDate();
+//		if(dataAnterior!=null) {
+//			String [] parsedAux = dataAnterior.split(" ");
+//			Date data2 = new Date(Integer.parseInt(parsedAux[0].split("-")[0]),Integer.parseInt(parsedAux[0].split("-")[1]),
+//					Integer.parseInt(parsedAux[0].split("-")[2]),Integer.parseInt(parsedAux[1].split(":")[0]),
+//					Integer.parseInt(parsedAux[1].split("-")[1]),Integer.parseInt(parsedAux[1].split("-")[2]));
+//		
+//			if(!data.after(data2)) {
+//				dataValida=false;
+//			}
+//		}
 
 		int i = 0;
 		for (String s : parsed) {

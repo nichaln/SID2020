@@ -17,7 +17,7 @@ public class MongoToMySQL {
 		MongoClient mongoClient1 = new MongoClient(
 				new MongoClientURI("mongodb://localhost:27017")); // ?
 
-		DB db = mongoClient1.getDB("museu_teste");
+		DB db = mongoClient1.getDB("dadosSensores");
 		DBCollection medicoes = db.getCollection("medicoesSensores"); // Coleção das Medições
 		DBCursor cursor = medicoes.find();
 		while (cursor.hasNext()) {
@@ -44,6 +44,10 @@ public class MongoToMySQL {
 			m.processar(Integer.parseInt(ms.getMedicaoMovimento()));
 
 		}
+	}
+	
+	public static void main(String[] args) {
+		new MongoToMySQL().readFromMongo();
 	}
 
 }
