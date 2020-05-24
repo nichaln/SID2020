@@ -66,12 +66,12 @@ public class CloudToMongo implements MqttCallback {
 			JOptionPane.showMessageDialog(null, "The CloudToMongo.ini file wasn't found.", "CloudToMongo",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		new CloudToMongo().connecCloud();
+		new CloudToMongo().connectCloud();
 		new CloudToMongo().connectMongo();
 
 	}
 
-	public void connecCloud() {
+	public void connectCloud() {
 		inicializarVetorMedicoes();
 		int i;
 		try {
@@ -103,26 +103,10 @@ public class CloudToMongo implements MqttCallback {
 //			document_json = (DBObject) JSON.parse(clean(c.toString()));
 //			System.out.println(c.toString());
 			receberMensagem(c.toString());
-//			metodoAuxiliar(c.toString());
 //			mongocol.insert(document_json);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-	}
-
-	public void metodoAuxiliar(String mensagem) {
-		String s = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum"));
-		System.out.println(Double.parseDouble(s.split(":")[1].replace("\"", "")));
-		System.out.println(mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1]
-				.replace("\"", ""));
-		System.out.println(mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1]
-				.replace("\"", ""));
-		System.out.println(mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(",\"cell")).split("\":\"")[1]
-				.replace("\"", ""));
-		System.out.println(mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1]
-				.replace("\"", ""));
-		System.out.println(mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1]
-				.replace("\"", ""));
 	}
 
 	public void connectionLost(Throwable cause) {
@@ -154,18 +138,12 @@ public class CloudToMongo implements MqttCallback {
 		// timestamp
 		System.out.println(timestamp);
 
-		String valorTmp = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum")).split(":")[1]
-				.replace("\"", "");
-		String valorHum = mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1]
-				.replace("\"", "");
-		String valorDat = mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1]
-				.replace("\"", "");
-		String valorTim = mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(",\"cell")).split("\":\"")[1]
-				.replace("\"", "");
-		String valorCel = mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1]
-				.replace("\"", "");
-		String valorMov = mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1]
-				.replace("\"", "");
+		String valorTmp = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum")).split(":")[1].replace("\"", "");
+		String valorHum = mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1].replace("\"", "");
+		String valorDat = mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1].replace("\"", "");
+		String valorTim = mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(",\"cell")).split("\":\"")[1].replace("\"", "");
+		String valorCel = mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1].replace("\"", "");
+		String valorMov = mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1].replace("\"", "");
 
 		Medicao m = new Medicao();
 		m.setDate(valorDat + " " + valorTim);
@@ -200,8 +178,7 @@ public class CloudToMongo implements MqttCallback {
 //			}
 //		}
 
-		if (verify(valorTmp, 't', timestamp) && dataValida) {// se correu tudo bem, escreve na medicoessensores e atualiza o
-														// vetor
+		if (verify(valorTmp, 't', timestamp) && dataValida) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
 			m.setMedicaoTemperatura("" + Double.parseDouble(valorTmp));
 			BasicDBObject document = new BasicDBObject();// não passar para cima por causa do ObjectId
 			document.put("TipoSensor", "TEM");
@@ -279,7 +256,7 @@ public class CloudToMongo implements MqttCallback {
 		medicoesAnteriores.add(m);
 		for (Medicao x : medicoesAnteriores)
 			System.out.println(x.getDate() + " || " + x.getMedicaoTemperatura() + " || " + x.getMedicaoHumidade()
-					+ " || " + x.getMedicaoLuminosidade());
+					+ " || " + x.getMedicaoLuminosidade() + " || " + x.getMedicaoMovimento());
 
 	}
 
