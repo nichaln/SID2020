@@ -99,12 +99,23 @@ public class CloudToMongo implements MqttCallback {
 			DBObject document_json;
 
 //			document_json = (DBObject) JSON.parse(clean(c.toString()));
-			System.out.println(c.toString());
-			receberMensagem(c.toString());
+//			System.out.println(c.toString());
+//			receberMensagem(c.toString());
+			metodoAuxiliar(c.toString());
 //			mongocol.insert(document_json);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+	}
+	
+	public void metodoAuxiliar(String mensagem) {
+		String s = mensagem.substring(mensagem.indexOf("tmp"),mensagem.indexOf(",\"hum"));
+		System.out.println(Double.parseDouble(s.split(":")[1].replace("\"", "")));
+		System.out.println(mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1].replace("\"",""));
+		System.out.println(mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1].replace("\"",""));
+		System.out.println(mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(",\"cell")).split("\":\"")[1].replace("\"",""));
+		System.out.println(mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1].replace("\"",""));
+		System.out.println(mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1].replace("\"",""));
 	}
 
 	public void connectionLost(Throwable cause) {
