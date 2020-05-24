@@ -2,8 +2,6 @@ import java.io.FileInputStream;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import javax.swing.JOptionPane;
-
 import com.mongodb.*;
 
 public class MongoToMySQL {
@@ -17,11 +15,11 @@ public class MongoToMySQL {
 	public void readFromMongo() {
 
 		MongoClient mongoClient1 = new MongoClient(
-				new MongoClientURI("mongodb://TOSHIBA:27017,TOSHIBA:25017,TOSHIBA:23017/?replicaSet=replicaDemo")); // IDK really
+				new MongoClientURI("mongodb://localhost:27017")); // ?
 
 		DB db = mongoClient1.getDB("museu_teste");
-		DBCollection table = db.getCollection("collection_demo"); // TODO Usar Coleção das Medições
-		DBCursor cursor = table.find();
+		DBCollection medicoes = db.getCollection("medicoesSensores"); // Coleção das Medições
+		DBCursor cursor = medicoes.find();
 		while (cursor.hasNext()) {
 			DBObject read = cursor.next();
 			System.out.println(read);
