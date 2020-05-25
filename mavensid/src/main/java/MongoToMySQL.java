@@ -66,7 +66,8 @@ public class MongoToMySQL {
 	public void readFromMongo() {
 		DBCursor cursor = medicoes.find();
 		int i = 0;
-		while (cursor.hasNext()) {
+		while(true) {
+			while (cursor.hasNext()) {
 			String read = cursor.next().toString();
 			System.out.println(read);
 			String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor")).split(": ")[1].replace("\"","");
@@ -78,6 +79,7 @@ public class MongoToMySQL {
 			String DataHoraMedicao = formatter.format(date);
 			System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
 			writeToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);	
+		}
 		}
 		
 

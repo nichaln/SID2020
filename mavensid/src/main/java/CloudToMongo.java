@@ -106,6 +106,7 @@ public class CloudToMongo implements MqttCallback {
 //			mongocol.insert(document_json);
 		} catch (Exception e) {
 			System.out.println(e);
+			e.printStackTrace();
 		}
 	}
 
@@ -137,28 +138,23 @@ public class CloudToMongo implements MqttCallback {
 		// 2020-05-14 14:25:1 // correspondente do
 		// timestamp
 		System.out.println(timestamp);
-
-		String valorTmp = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum")).split(":")[1].replace("\"", "");
+		System.out.println(mensagem);
+		
+		String[] parsedMessage = parseMessage(mensagem);		
+		String valorTmp = parsedMessage[0], valorHum = parsedMessage[1];
+		String valorDat = parsedMessage[2], valorTim = parsedMessage[3];
+		String valorCel = parsedMessage[4], valorMov = parsedMessage[5];
+		
+		/*String valorTmp = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum")).split(":")[1].replace("\"", "");
 		String valorHum = mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1].replace("\"", "");
 		String valorDat = mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1].replace("\"", "");
-		String valorTim = mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(",\"cell")).split("\":\"")[1].replace("\"", "");
-		String valorCel = mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1].replace("\"", "");
-		String valorMov = mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1].replace("\"", "");
-
+		String valorTim = mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(", mov")).split("\":\"")[1];//.replace("\"", ""); // tirei o /" antes do mov
+		String valorCel = 0+"";// mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1].replace("\"", "");
+		String valorMov = mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1].replace("\"", "");*/
+		
 		Medicao m = new Medicao();
 		m.setDate(valorDat + " " + valorTim);
 		System.out.println("DATE SET: " + valorDat + " " + valorTim);
-
-		/*
-		 * brincar com isto para quem quiser
-		 * 
-		 * SimpleDateFormat formatter= new
-		 * SimpleDateFormat("yyyy-MM-dd 'at' HH:mm:ss z"); Date date = new
-		 * Date(System.currentTimeMillis()); System.out.println(formatter.format(date));
-		 * 
-		 * 
-		 * 
-		 */
 
 		boolean dataValida = true;
 		/* ver se a data é maior do que da medicao anterior */
@@ -259,7 +255,38 @@ public class CloudToMongo implements MqttCallback {
 					+ " || " + x.getMedicaoLuminosidade() + " || " + x.getMedicaoMovimento());
 
 	}
-
+	
+	private String[] parseMessage(String message) {
+		String[] parsedMessage = new String[6];
+		for(int i = 0; i != parsedMessage.length; i++)
+			parsedMessage[i] = 0+"";
+		String[] messageArray = message.split("\"*\\s*,\\s*\"*");
+		messageArray[0] = messageArray[0].replace("{\"", "");
+		messageArray[messageArray.length-1] = messageArray[messageArray.length-1].replace("\"}", "");
+		String[][] auxiliar = new String[messageArray.length][2];
+		for (int i = 0; i != messageArray.length; i++) {
+			//System.out.println(messageArray[i]);
+			auxiliar[i] = messageArray[i].split("\":\"");
+		}
+		System.out.println("-------------------------------");
+		for (int i = 0; i != auxiliar.length; i++) {
+			System.out.println(auxiliar[i][0] + " " + auxiliar[i][1]);
+			if (auxiliar[i][0].contains("tmp"))
+				parsedMessage[0] = auxiliar[i][1];
+			if (auxiliar[i][0].contains("hum"))
+				parsedMessage[1] = auxiliar[i][1];
+			if (auxiliar[i][0].contains("dat"))
+				parsedMessage[2] = auxiliar[i][1];
+			if (auxiliar[i][0].contains("tim"))
+				parsedMessage[3] = auxiliar[i][1];
+			if (auxiliar[i][0].contains("cell"))
+				parsedMessage[4] = auxiliar[i][1];
+			if (auxiliar[i][0].contains("mov"))
+				parsedMessage[5] = auxiliar[i][1];
+		}
+		return parsedMessage;
+	}
+	
 	private boolean verify(String aux, char key, String timestamp) {
 		double leitura;
 		switch (key) {
