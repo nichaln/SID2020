@@ -64,26 +64,33 @@ public class MongoToMySQL {
 
 	}
 
-	public void readFromMongo() {
-		DBCursor cursor = medicoes.find();
+	public void readFromMongo() throws InterruptedException {
+		DBObject dboobject;
 		int i = 0;
 		while(true) {
-			while (cursor.hasNext()) {
-			String read = cursor.next().toString();
-			System.out.println(read);
-			String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor")).split(": ")[1].replace("\"","");
-			Double ValorMedicao = Double.parseDouble(read.substring(read.indexOf("ValorMedicao\": "), read.indexOf(", \"Data")).split(":")[1]);
-			int id = i;
-			i++;
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date date = new Date(System.currentTimeMillis());
-			String DataHoraMedicao = formatter.format(date);
-			System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
-			writeToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);	
+//			DBCursor cursor = medicoes.find();
+			
+//			while (cursor.hasNext()) {
+//				String read = cursor.next().toString();
+				dboobject = medicoes.findOne();
+				if(dboobject != null) {
+					String read = dboobject.toString();
+					System.out.println(read);
+					String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor")).split(": ")[1].replace("\"","");
+					Double ValorMedicao = Double.parseDouble(read.substring(read.indexOf("ValorMedicao\": "), read.indexOf(", \"Data")).split(":")[1]);
+					int id = i;
+					i++;
+					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					Date date = new Date(System.currentTimeMillis());
+					String DataHoraMedicao = formatter.format(date);
+					System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
+					writeToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
+					medicoes.remove(dboobject);
+				}else {
+					Thread.sleep(2000);
+				}
+//			}
 		}
-		}
-		
-
 	}
 
 	public void writeToMySQL(int id, Double valorMedicao, String tipoSensor, String dataHoraMedicao) {
@@ -112,7 +119,7 @@ public class MongoToMySQL {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		MongoToMySQL m = new MongoToMySQL();
 		m.connectToMongo();
 		m.connectToMySQL();
