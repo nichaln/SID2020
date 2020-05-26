@@ -21,7 +21,7 @@ public class JavaMysql {
 		int maxIdCliente = 0;
 		sql_password = "pass";
 		sql_user = "transporter";
-		sql_connection = "jdbc:mysql://localhost/museu_teste";
+		sql_connection = "jdbc:mysql://localhost/museu2";//mudar aqui o nome da base de dados!
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();

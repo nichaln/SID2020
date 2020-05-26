@@ -51,13 +51,14 @@ public class MongoToMySQL {
 		int maxIdCliente = 0;
 		sql_password = "pass";
 		sql_user = "transporter";
-		sql_connection = "jdbc:mysql://localhost/museu_teste";
+		sql_connection = "jdbc:mysql://localhost/museu2";//mudar aqui o nome da base de dados!
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 			SQLconn = DriverManager.getConnection(sql_connection + "?user=" + sql_user + "&password=" + sql_password);
 			System.out.println("passou");
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println("Server down, unable to make the connection. ");
 		}
 
