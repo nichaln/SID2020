@@ -1,3 +1,5 @@
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -6,16 +8,22 @@ public class Temperaturas {
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
 	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
-	double limiteTempSup=45;
-	double limiteTempInf=0;/**ACABAR ISTO COM UMA FORMULA MANHOSA**/
-	int contador=0;
+	double limiteTempSup = 45;
+	double limiteTempInf = 0;/**ACABAR ISTO COM UMA FORMULA MANHOSA**/
+	int contador = 0;
+	MongoToMySQL contact;
+	int id_counter = 0;
+	
+	public Temperaturas(MongoToMySQL contact) {
+		this.contact=contact;
+	}
 	
 	private double calcularMediaAnterior() {
 		double sum=0;
 		for(int i=0;i<mediasAnteriores.size();i++) {
 			sum+=valoresRecebidos.get(i);
 		}
-		System.out.println("media valores recebidos anterior:" + sum/mediasAnteriores.size());
+		//System.out.println("media valores recebidos anterior:" + sum/mediasAnteriores.size());
 		return sum/mediasAnteriores.size();
 	}
 	
@@ -29,7 +37,11 @@ public class Temperaturas {
 				System.err.println("Alerta Temperatura a aumentar!!!");
 				contador=8;
 			}
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = new Date(System.currentTimeMillis());
+			String DataHoraMedicao = formatter.format(date);
 			// TODO Alerta Temp alta
+			contact.writeAlertaToMySQL(id_counter++ + "", DataHoraMedicao, null, null, null, null, null, null);
 		}
 		if(calcneg <= limiteTempInf) {
 			System.err.println("Alerta Temperatura a diminuir!!!");
@@ -62,8 +74,8 @@ public class Temperaturas {
 		}
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Temperaturas t = new Temperaturas();
 		t.start();
-	}
+	}*/
 }

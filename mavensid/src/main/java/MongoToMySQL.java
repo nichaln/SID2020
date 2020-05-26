@@ -11,7 +11,7 @@ import java.text.*;
 public class MongoToMySQL {
 
 	public LinkedList<Medicao> medicoesSensores = new LinkedList<Medicao>();
-	Temperaturas t = new Temperaturas();
+	Temperaturas t = new Temperaturas(this);
 	Humidade h = new Humidade();
 	Luminosidade l = new Luminosidade();
 	Movimento m = new Movimento();
@@ -49,8 +49,8 @@ public class MongoToMySQL {
 		String sql_user = new String();
 		String sql_connection = new String();
 		int maxIdCliente = 0;
-		sql_password = "pass";
 		sql_user = "transporter";
+		sql_password = "pass";
 		sql_connection = "jdbc:mysql://localhost/museu2";//mudar aqui o nome da base de dados!
 
 		try {
@@ -84,7 +84,7 @@ public class MongoToMySQL {
 					Date date = new Date(System.currentTimeMillis());
 					String DataHoraMedicao = formatter.format(date);
 					System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
-					writeToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
+					writeMedicaoToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
 					medicoes.remove(dboobject);
 				}else {
 					Thread.sleep(2000);
@@ -93,22 +93,33 @@ public class MongoToMySQL {
 		}
 	}
 
-	public void writeToMySQL(int id, Double valorMedicao, String tipoSensor, String dataHoraMedicao) {
-		ResultSet rs;
+	private void writeMedicaoToMySQL(int id, Double valorMedicao, String tipoSensor, String dataHoraMedicao) {
 		try {
 			SQLstatement = SQLconn.createStatement();
-			/*rs = SQLstatement.executeQuery("Select * from alerta");
-			while (rs.next())
-				System.out.println(rs.getString("Descricao"));*/
-
 			SQLstatement.executeUpdate("Insert into medicoessensores (IDMedicao, ValorMedicao, TipoSensor, DataHoraMedicao)"
 					+ " values (" + id + ", "+ valorMedicao + ", '" + tipoSensor + "', '" + dataHoraMedicao + "');");
 		} catch (Exception e) {
-			System.out.println("Error quering  the database . " + e);
+			System.out.println("Erro a escrever uma medição. " + e);
 		}
 
 	}
 
+	public void writeAlertaToMySQL(String id, String dataHoraMedicao, String tipoSensor, String valorMedicao,
+			String limite, String descricao, String controlo, String extra) {
+		try {
+			SQLstatement = SQLconn.createStatement();
+			SQLstatement.executeUpdate(
+					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
+							+ " values (" + id + ", " + dataHoraMedicao + ", '" + tipoSensor + "', '" + valorMedicao
+							+ ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + "');");
+
+			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
+		} catch (Exception e) {
+			System.out.println("Erro a escrever um alerta. " + e);
+		}
+
+	}
+	
 	public void separarMedicoes() {
 		for (Medicao ms : medicoesSensores) {
 			t.processar(Double.parseDouble(ms.getMedicaoTemperatura()));
