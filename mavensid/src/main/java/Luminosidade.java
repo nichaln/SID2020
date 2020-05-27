@@ -24,7 +24,7 @@ public class Luminosidade {
 		return sum/mediasAnteriores.size();
 	}
 	
-	public void processar(double num) {//TODO Falta verificar se não há rondas e cenas em todos estes coisos
+	public void processar(double num) { //TODO Falta verificar se não há rondas e cenas em todos estes coisos
 		double mediaAnterior = calcularMediaAnterior();
 		if(num >= limiteLuminosidade) {
 			System.err.println("Alerta Vermelho - Bué da luz!!!");
