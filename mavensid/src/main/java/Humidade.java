@@ -48,31 +48,5 @@ public class Humidade {
 	public void updateLimite(double limit) {
 		this.limiteHumidade = limit;
 	}
-		
-	
-	
-	private void start() {
-		Scanner in = new Scanner(System.in);
-		for(int i=0;i<5;i++) {
-			System.out.println("Escreva a medicao:\n");
-			double a = in.nextDouble();
-			System.out.println("Medicao lida:"+  a + "\n");
-			valoresRecebidos.addLast(a);
-			System.out.println("Escreva a media:\n");
-			a = in.nextDouble();
-			System.out.println("Media lida:"+ a + "\n");
-			mediasAnteriores.addLast(a);
-		}
-		while (true) {
-			System.out.println("Proxima medicao sensor\n");
-			double num = in.nextDouble();
-			processar(num);
-		}
-	}
-	
-	/*public static void main(String[] args) {
-		Humidade t = new Humidade();
-		t.start();
-	}*/
 
 }
