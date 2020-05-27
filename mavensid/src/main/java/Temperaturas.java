@@ -25,9 +25,13 @@ public class Temperaturas {
 	}
 	
 	public void processar(double num) {
-		double mediaAnterior = calcularMediaAnterior();
-		double media3InstantesAntes = mediasAnteriores.poll();
 		
+		double mediaAnterior = calcularMediaAnterior(); //Media que vai entrar
+		double media5InstantesAntes = Double.NaN;
+		
+		 if (mediasAnteriores.size() == 5) {
+			 media5InstantesAntes = mediasAnteriores.poll(); //Media que vai sair da lista, isto só acontece depois de 5 ciclos 
+		 }
 		/*
 		 * Aqui vemos para o quente 
 		 */
@@ -35,8 +39,8 @@ public class Temperaturas {
 		if(num >= limiteTempSup) {
 			System.err.println("Alerta HOT HOT HOT!!!");
 			contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Santarém", 0+"", ""); // Este vai ser a VERMELHO
-		} else { //prever
-			double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
+		} else if (!Double.isNaN(media5InstantesAntes)){ //prever
+			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 			if(calc >= limiteTempSup) {
 				if(contador==0) {
 					System.err.println("Alerta Temperatura a aumentar!!!");
@@ -53,8 +57,8 @@ public class Temperaturas {
 		if (num <= limiteTempInf) {
 			System.err.println("Alerta COLD COLD COLD!!!");
 			contact.writeAlertaToMySQL("TEM", num+"", limiteTempInf+"", "Fresquinho", 0+"", ""); // Este vai ser a VERMELHO
-		} else {
-			double calcneg = (media3InstantesAntes - mediaAnterior) * variavel + num;
+		} else if (!Double.isNaN(media5InstantesAntes)) {
+			double calcneg = (media5InstantesAntes - mediaAnterior) * variavel + num;
 			if (calcneg <= limiteTempInf) {
 				System.err.println("Alerta Temperatura a diminuir!!!");
 				// TODO Alerta Temp baixa
@@ -67,6 +71,7 @@ public class Temperaturas {
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
+		
 	}
 	
 	public void updateLimite(double limit) {
