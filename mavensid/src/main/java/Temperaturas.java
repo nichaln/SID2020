@@ -27,7 +27,8 @@ public class Temperaturas {
 	public void processar(double num) {
 		
 		double mediaAnterior = calcularMediaAnterior(); //Media que vai entrar
-		double media5InstantesAntes = Double.NaN; //É preciso 
+		double media5InstantesAntes = Double.NaN; //É preciso inicializar a NaN para termos uma condição em baixo para não prever
+												  // antes de ter 5 elementos na lista
 		
 		 if (mediasAnteriores.size() == 5) {
 			 media5InstantesAntes = mediasAnteriores.poll(); //Media que vai sair da lista, isto só acontece depois de 5 ciclos 
