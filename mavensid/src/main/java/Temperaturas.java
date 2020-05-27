@@ -16,12 +16,12 @@ public class Temperaturas {
 	}
 	
 	private double calcularMediaAnterior() {
-		double sum=0;
-		for(int i=0;i<mediasAnteriores.size();i++) {
-			sum+=valoresRecebidos.get(i);
+		double sum = 0;
+		for (int i = 0; i != mediasAnteriores.size(); i++) {
+			sum += valoresRecebidos.get(i);
 		}
-		//System.out.println("media valores recebidos anterior:" + sum/mediasAnteriores.size());
-		return sum/mediasAnteriores.size();
+		// System.out.println("media valores recebidos anterior:" +sum/mediasAnteriores.size());
+		return sum / mediasAnteriores.size();
 	}
 	
 	public void processar(double num) {
@@ -69,8 +69,11 @@ public class Temperaturas {
 		
 		if (contador > 0)
 			contador--;
-		valoresRecebidos.removeFirst();
+		if(valoresRecebidos.size() == 5)
+			valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
+		if(mediasAnteriores.size() == 5)
+			mediasAnteriores.removeFirst();
 		mediasAnteriores.addLast(mediaAnterior);
 		
 	}

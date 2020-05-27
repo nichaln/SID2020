@@ -87,17 +87,17 @@ public class MongoToMySQL {
 				String DataHoraMedicao = formatter.format(date);
 				System.out.println(id + "-" + ValorMedicao + "-" + TipoSensor + "-" + DataHoraMedicao);
 				writeMedicaoToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
-				if (TipoSensor.equals("TEMP")) {
+				if (TipoSensor.equals("TEM")) {
 					t.processar(ValorMedicao);
 				}
 				if (TipoSensor.equals("HUM")) {
 					h.processar(ValorMedicao);
 				}
-				if (TipoSensor.equals("LUM")) {
+				if (TipoSensor.equals("CEL")) {
 					l.processar(ValorMedicao);
 				}
 				if (TipoSensor.equals("MOV")) {
-					m.processar(Integer.parseInt(ValorMedicao+""));
+					m.processar(ValorMedicao);
 				}
 				medicoes.remove(dboobject);
 			} else {
@@ -127,8 +127,8 @@ public class MongoToMySQL {
 			SQLstatement = SQLconn.createStatement();
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
-							+ " values (" + idAlertas++ + ", " + dataHoraMedicao + ", '" + tipoSensor + "', "
-							+ valorMedicao + ", " + limite + ", " + descricao + ", " + 0 + ", " + extra + ");");
+							+ " values (" + idAlertas++ + ", '" + dataHoraMedicao + "', '" + tipoSensor + "', "
+							+ valorMedicao + ", " + limite + ", " + null + ", " + 0 + ", " + null + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {
@@ -140,8 +140,8 @@ public class MongoToMySQL {
 		for (Medicao ms : medicoesSensores) {
 			t.processar(Double.parseDouble(ms.getMedicaoTemperatura()));
 			h.processar(Double.parseDouble(ms.getMedicaoHumidade()));
-			l.processar(Integer.parseInt(ms.getMedicaoLuminosidade()));
-			m.processar(Integer.parseInt(ms.getMedicaoMovimento()));
+			l.processar(Double.parseDouble(ms.getMedicaoLuminosidade()));
+			m.processar(Double.parseDouble(ms.getMedicaoMovimento()));
 
 		}
 	}
