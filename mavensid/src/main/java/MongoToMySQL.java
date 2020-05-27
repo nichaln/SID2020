@@ -39,7 +39,7 @@ public class MongoToMySQL {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
-		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host)); 
+		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host));
 
 		DB db = mongoClient1.getDB(mongo_database);
 		medicoes = db.getCollection(mongo_collection); // Coleção das Medições
@@ -51,7 +51,7 @@ public class MongoToMySQL {
 		String sql_connection = new String();
 		sql_user = "transporter";
 		sql_password = "pass";
-		sql_connection = "jdbc:mysql://localhost/museu2";//mudar aqui o nome da base de dados!
+		sql_connection = "jdbc:mysql://localhost/museu2";// mudar aqui o nome da base de dados!
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -67,28 +67,30 @@ public class MongoToMySQL {
 	public void readFromMongo() throws InterruptedException {
 		DBObject dboobject;
 		int i = 0;
-		while(true) {
+		while (true) {
 //			DBCursor cursor = medicoes.find();
-			
+
 //			while (cursor.hasNext()) {
 //				String read = cursor.next().toString();
-				dboobject = medicoes.findOne();
-				if(dboobject != null) {
-					String read = dboobject.toString();
-					System.out.println(read);
-					String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor")).split(": ")[1].replace("\"","");
-					Double ValorMedicao = Double.parseDouble(read.substring(read.indexOf("ValorMedicao\": "), read.indexOf(", \"Data")).split(":")[1]);
-					int id = i;
-					i++;
-					SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-					Date date = new Date(System.currentTimeMillis());
-					String DataHoraMedicao = formatter.format(date);
-					System.out.println(id+ "-"+ ValorMedicao+ "-"+  TipoSensor+ "-"+ DataHoraMedicao);
-					writeMedicaoToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
-					medicoes.remove(dboobject);
-				}else {
-					Thread.sleep(2000);
-				}
+			dboobject = medicoes.findOne();
+			if (dboobject != null) {
+				String read = dboobject.toString();
+				System.out.println(read);
+				String TipoSensor = read.substring(read.indexOf("TipoSensor\": "), read.indexOf(", \"Valor"))
+						.split(": ")[1].replace("\"", "");
+				Double ValorMedicao = Double.parseDouble(
+						read.substring(read.indexOf("ValorMedicao\": "), read.indexOf(", \"Data")).split(":")[1]);
+				int id = i;
+				i++;
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date date = new Date(System.currentTimeMillis());
+				String DataHoraMedicao = formatter.format(date);
+				System.out.println(id + "-" + ValorMedicao + "-" + TipoSensor + "-" + DataHoraMedicao);
+				writeMedicaoToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
+				medicoes.remove(dboobject);
+			} else {
+				Thread.sleep(2000);
+			}
 //			}
 		}
 	}
@@ -96,15 +98,17 @@ public class MongoToMySQL {
 	private void writeMedicaoToMySQL(int id, Double valorMedicao, String tipoSensor, String dataHoraMedicao) {
 		try {
 			SQLstatement = SQLconn.createStatement();
-			SQLstatement.executeUpdate("Insert into medicoessensores (IDMedicao, ValorMedicao, TipoSensor, DataHoraMedicao)"
-					+ " values (" + id + ", "+ valorMedicao + ", '" + tipoSensor + "', '" + dataHoraMedicao + "');");
+			SQLstatement.executeUpdate(
+					"Insert into medicoessensores (IDMedicao, ValorMedicao, TipoSensor, DataHoraMedicao)" + " values ("
+							+ id + ", " + valorMedicao + ", '" + tipoSensor + "', '" + dataHoraMedicao + "');");
 		} catch (Exception e) {
 			System.out.println("Erro a escrever uma medição. " + e);
 		}
 
 	}
 
-	public void writeAlertaToMySQL(String tipoSensor, String valorMedicao, String limite, String descricao, String controlo, String extra) {
+	public void writeAlertaToMySQL(String tipoSensor, String valorMedicao, String limite, String descricao,
+			String controlo, String extra) {
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
 		String dataHoraMedicao = formatter.format(date);
@@ -112,8 +116,8 @@ public class MongoToMySQL {
 			SQLstatement = SQLconn.createStatement();
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
-							+ " values (" + idAlertas++ + ", " + dataHoraMedicao + ", '" + tipoSensor + "', " + valorMedicao
-							+ ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + ");");
+							+ " values (" + idAlertas++ + ", " + dataHoraMedicao + ", '" + tipoSensor + "', "
+							+ valorMedicao + ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {
@@ -121,7 +125,7 @@ public class MongoToMySQL {
 		}
 
 	}
-	
+
 	public void separarMedicoes() {
 		for (Medicao ms : medicoesSensores) {
 			t.processar(Double.parseDouble(ms.getMedicaoTemperatura()));
@@ -132,10 +136,33 @@ public class MongoToMySQL {
 		}
 	}
 
+	private void startUpdaterThreads() {
+		new Thread(new Runnable() {// thread que atualiza os valores limites
+
+			public void run() {
+				String SqlCommando = new String();
+				ResultSet rs;
+				double maxTemp;
+				while (true) {
+					SqlCommando = "Select LimiteTemperatura as MaximoTemp from sistema;";
+					try {
+						SQLstatement = SQLconn.createStatement();
+						rs = SQLstatement.executeQuery(SqlCommando);
+						maxTemp = rs.getInt("Maximo") + 1;//falta acabar
+					} catch (Exception e) {
+						System.out.println("Error quering  the database . " + e);
+					}
+
+				}
+			}
+		}).start();
+	}
+
 	public static void main(String[] args) throws InterruptedException {
 		MongoToMySQL m = new MongoToMySQL();
 		m.connectToMongo();
 		m.connectToMySQL();
+		m.startUpdaterThreads();
 		m.readFromMongo();
 	}
 
