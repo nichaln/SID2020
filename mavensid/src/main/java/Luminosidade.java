@@ -42,6 +42,11 @@ public class Luminosidade {
 		mediasAnteriores.addLast(mediaAnterior);
 	}
 	
+	public void updateLimite(double limit) {
+		this.limiteLuminosidade = limit;
+	}
+		
+	
 	
 	private void start() {
 		Scanner in = new Scanner(System.in);

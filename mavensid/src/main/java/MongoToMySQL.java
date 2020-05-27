@@ -59,7 +59,7 @@ public class MongoToMySQL {
 			System.out.println("passou");
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Server down, unable to make the connection. ");
+			System.out.println("Server down, unable to make the connection.");
 		}
 
 	}
@@ -104,7 +104,6 @@ public class MongoToMySQL {
 		} catch (Exception e) {
 			System.out.println("Erro a escrever uma medição. " + e);
 		}
-
 	}
 
 	public void writeAlertaToMySQL(String tipoSensor, String valorMedicao, String limite, String descricao,
@@ -123,7 +122,6 @@ public class MongoToMySQL {
 		} catch (Exception e) {
 			System.out.println("Erro a escrever um alerta. " + e);
 		}
-
 	}
 
 	public void separarMedicoes() {
@@ -136,24 +134,42 @@ public class MongoToMySQL {
 		}
 	}
 
-	private void startUpdaterThreads() {
-		new Thread(new Runnable() {// thread que atualiza os valores limites
-
+	private void updateLimites() {
+		new Thread(new Runnable() {
 			public void run() {
 				String SqlCommando = new String();
 				ResultSet rs;
-				double maxTemp;
-				while (true) {
-					SqlCommando = "Select LimiteTemperatura as MaximoTemp from sistema;";
-					try {
-						SQLstatement = SQLconn.createStatement();
-						rs = SQLstatement.executeQuery(SqlCommando);
-						maxTemp = rs.getInt("Maximo") + 1;//falta acabar
-					} catch (Exception e) {
-						System.out.println("Error quering  the database . " + e);
-					}
-
+				double maxTemp = 0.0;
+				double maxHum = 0.0;
+				double maxLum = 0.0;
+				SqlCommando = "Select LimiteTemperatura as MaximoTemp from sistema;";
+				try {
+					SQLstatement = SQLconn.createStatement();
+					rs = SQLstatement.executeQuery(SqlCommando);
+					maxTemp = rs.getInt("Maximo") + 1; // does this work?
+				} catch (Exception e) {
+					System.out.println("Erro a ler o limite máximo da temperatura. " + e);
 				}
+				SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;";
+				try {
+					SQLstatement = SQLconn.createStatement();
+					rs = SQLstatement.executeQuery(SqlCommando);
+					maxHum = rs.getInt("Maximo") + 1; // does this work?
+				} catch (Exception e) {
+					System.out.println("Erro a ler o limite máximo da Humidade. " + e);
+				}
+				SqlCommando = "Select LimiteLuminosidade as MaximoLum from sistema;";
+				try {
+					SQLstatement = SQLconn.createStatement();
+					rs = SQLstatement.executeQuery(SqlCommando);
+					maxLum = rs.getInt("Maximo") + 1; // does this work?
+				} catch (Exception e) {
+					System.out.println("Erro a ler o limite máximo da Luminosidade. " + e);
+				}
+				t.updateLimite(maxTemp);
+				l.updateLimite(maxLum);
+				h.updateLimite(maxHum);
+				
 			}
 		}).start();
 	}
@@ -162,7 +178,7 @@ public class MongoToMySQL {
 		MongoToMySQL m = new MongoToMySQL();
 		m.connectToMongo();
 		m.connectToMySQL();
-		m.startUpdaterThreads();
+		m.updateLimites();
 		m.readFromMongo();
 	}
 

@@ -7,7 +7,7 @@ public class Humidade {
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
 	double limiteHumidade=130;
-	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
+	double variavel = 10; //quanto maior o valor da variavel mais rapido se vai alertar
 	
 	MongoToMySQL contact;
 	
@@ -44,6 +44,11 @@ public class Humidade {
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
 	}
+	
+	public void updateLimite(double limit) {
+		this.limiteHumidade = limit;
+	}
+		
 	
 	
 	private void start() {

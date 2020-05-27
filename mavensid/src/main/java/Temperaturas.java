@@ -1,5 +1,3 @@
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -7,9 +5,9 @@ public class Temperaturas {
 	LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
-	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
+	double variavel = 10; //quanto maior o valor da variavel mais rapido se vai alertar
 	double limiteTempSup = 45;
-	double limiteTempInf = 0;/**ACABAR ISTO COM UMA FORMULA MANHOSA**/
+	double limiteTempInf = 0; /**ACABAR ISTO COM UMA FORMULA MANHOSA**/
 	int contador = 0;
 	MongoToMySQL contact;
 	
@@ -36,7 +34,7 @@ public class Temperaturas {
 		if(num >= limiteTempSup) {
 			System.err.println("Alerta HOT HOT HOT!!!");
 			contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Santarém", 0+"", ""); // Este vai ser a VERMELHO
-		} else {
+		} else { //prever
 			double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
 			if(calc >= limiteTempSup) {
 				if(contador==0) {
@@ -68,6 +66,11 @@ public class Temperaturas {
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
 		mediasAnteriores.addLast(mediaAnterior);
+	}
+	
+	public void updateLimite(double limit) {
+		this.limiteTempSup = limit;
+		this.limiteTempInf = limit - limit;
 	}
 		
 	private void start() {
