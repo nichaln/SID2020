@@ -30,7 +30,7 @@ public class JavaMysql {
 		} catch (Exception e) {
 			System.out.println("Server down, unable to make the connection. ");
 		}
-		SqlCommando = "Select max(Numero_Cliente) as  Maximo from cliente;";
+		SqlCommando = "Select max(Numero_Cliente) as Maximo from cliente;";
 		try {
 			s = conn.createStatement();
 			rs = s.executeQuery(SqlCommando);

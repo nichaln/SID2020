@@ -49,7 +49,7 @@ public class Temperaturas {
 		/*
 		 * Aqui vemos para o frio 
 		 */
-		if (num <= limiteTempSup) {
+		if (num <= limiteTempInf) {
 			System.err.println("Alerta COLD COLD COLD!!!");
 			contact.writeAlertaToMySQL("TEM", num+"", limiteTempInf+"", "Fresquinho", 0+"", ""); // Este vai ser a VERMELHO
 		} else {
