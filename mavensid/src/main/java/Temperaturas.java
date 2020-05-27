@@ -12,7 +12,6 @@ public class Temperaturas {
 	double limiteTempInf = 0;/**ACABAR ISTO COM UMA FORMULA MANHOSA**/
 	int contador = 0;
 	MongoToMySQL contact;
-	int id_counter = 0;
 	
 	public Temperaturas(MongoToMySQL contact) {
 		this.contact=contact;
@@ -30,24 +29,40 @@ public class Temperaturas {
 	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
 		double media3InstantesAntes = mediasAnteriores.poll();
-		double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
-		double calcneg = (media3InstantesAntes-mediaAnterior) * variavel + num;
-		if(calc >= limiteTempSup) {
-			if(contador==0) {
-				System.err.println("Alerta Temperatura a aumentar!!!");
-				contador=8;
+		
+		/*
+		 * Aqui vemos para o quente 
+		 */
+		if(num >= limiteTempSup) {
+			System.err.println("Alerta HOT HOT HOT!!!");
+			contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Santarém", 0+"", ""); // Este vai ser a VERMELHO
+		} else {
+			double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
+			if(calc >= limiteTempSup) {
+				if(contador==0) {
+					System.err.println("Alerta Temperatura a aumentar!!!");
+					contador=8;
+					// TODO Alerta Temp alta
+				contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Temperatura a aumentar", 0+"", ""); // Este vai ser a AMARELO
+				}
+				
 			}
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date date = new Date(System.currentTimeMillis());
-			String DataHoraMedicao = formatter.format(date);
-			// TODO Alerta Temp alta
-			contact.writeAlertaToMySQL(id_counter++ + "", DataHoraMedicao, null, null, null, null, null, null);
 		}
-		if(calcneg <= limiteTempInf) {
-			System.err.println("Alerta Temperatura a diminuir!!!");
-			
-			// TODO Alerta Temp baixa
+		/*
+		 * Aqui vemos para o frio 
+		 */
+		if (num <= limiteTempSup) {
+			System.err.println("Alerta COLD COLD COLD!!!");
+			contact.writeAlertaToMySQL("TEM", num+"", limiteTempInf+"", "Fresquinho", 0+"", ""); // Este vai ser a VERMELHO
+		} else {
+			double calcneg = (media3InstantesAntes - mediaAnterior) * variavel + num;
+			if (calcneg <= limiteTempInf) {
+				System.err.println("Alerta Temperatura a diminuir!!!");
+				// TODO Alerta Temp baixa
+				contact.writeAlertaToMySQL("TEM", num + "", limiteTempInf + "", "Temperatura a diminuir", 0 + "", "");// Este vai ser a AMARELO
+			}
 		}
+		
 		if(contador>0)
 			contador--;
 		valoresRecebidos.removeFirst();

@@ -12,14 +12,15 @@ public class MongoToMySQL {
 
 	public LinkedList<Medicao> medicoesSensores = new LinkedList<Medicao>();
 	Temperaturas t = new Temperaturas(this);
-	Humidade h = new Humidade();
-	Luminosidade l = new Luminosidade();
-	Movimento m = new Movimento();
+	Humidade h = new Humidade(this);
+	Luminosidade l = new Luminosidade(this);
+	Movimento m = new Movimento(this);
 
 	static String mongo_host = new String();
 	static String mongo_database = new String();
 	static String mongo_collection = new String();
 	DBCollection medicoes;
+	int idAlertas = 0;
 
 	static Connection SQLconn;
 	static Statement SQLstatement;
@@ -38,7 +39,7 @@ public class MongoToMySQL {
 					JOptionPane.ERROR_MESSAGE);
 		}
 
-		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host)); // ?
+		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host)); 
 
 		DB db = mongoClient1.getDB(mongo_database);
 		medicoes = db.getCollection(mongo_collection); // Coleção das Medições
@@ -48,7 +49,6 @@ public class MongoToMySQL {
 		String sql_password = new String();
 		String sql_user = new String();
 		String sql_connection = new String();
-		int maxIdCliente = 0;
 		sql_user = "transporter";
 		sql_password = "pass";
 		sql_connection = "jdbc:mysql://localhost/museu2";//mudar aqui o nome da base de dados!
@@ -104,14 +104,16 @@ public class MongoToMySQL {
 
 	}
 
-	public void writeAlertaToMySQL(String id, String dataHoraMedicao, String tipoSensor, String valorMedicao,
-			String limite, String descricao, String controlo, String extra) {
+	public void writeAlertaToMySQL(String tipoSensor, String valorMedicao, String limite, String descricao, String controlo, String extra) {
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = new Date(System.currentTimeMillis());
+		String dataHoraMedicao = formatter.format(date);
 		try {
 			SQLstatement = SQLconn.createStatement();
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
-							+ " values (" + id + ", " + dataHoraMedicao + ", '" + tipoSensor + "', '" + valorMedicao
-							+ ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + "');");
+							+ " values (" + idAlertas++ + ", " + dataHoraMedicao + ", '" + tipoSensor + "', " + valorMedicao
+							+ ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {

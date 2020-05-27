@@ -9,6 +9,12 @@ public class Humidade {
 	double limiteHumidade=130;
 	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
 	
+	MongoToMySQL contact;
+	
+	public Humidade(MongoToMySQL contact) {
+		this.contact=contact;
+	}
+	
 	private double calcularMediaAnterior() {
 		double sum=0;
 		for(int i=0;i<mediasAnteriores.size();i++) {
@@ -20,12 +26,19 @@ public class Humidade {
 	
 	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
-		double media5InstantesAntes = mediasAnteriores.poll();
-		double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
-		if(calc >= limiteHumidade) {
+		if (num >= limiteHumidade) {
 			System.err.println("Alerta Vermelho - Muita húmido!!!");
-			
-			// TODO Alerta da humidade
+			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Está mega húmido", 0 + "", "");// Este vai ser a VERMELHO
+		} else {
+			double media5InstantesAntes = mediasAnteriores.poll();
+			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
+			if (calc >= limiteHumidade) {
+				System.err.println("Alerta amarelo - vai ficar húmido!!!");
+
+				// TODO Alerta da humidade
+				contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Vai ficar muita húmido", 0 + "", ""); // Este vai 
+																														//ser a AMARELO
+			}
 		}
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
@@ -52,9 +65,9 @@ public class Humidade {
 		}
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		Humidade t = new Humidade();
 		t.start();
-	}
+	}*/
 
 }
