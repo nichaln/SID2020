@@ -87,6 +87,18 @@ public class MongoToMySQL {
 				String DataHoraMedicao = formatter.format(date);
 				System.out.println(id + "-" + ValorMedicao + "-" + TipoSensor + "-" + DataHoraMedicao);
 				writeMedicaoToMySQL(id, ValorMedicao, TipoSensor, DataHoraMedicao);
+				if (TipoSensor.equals("TEMP")) {
+					t.processar(ValorMedicao);
+				}
+				if (TipoSensor.equals("HUM")) {
+					h.processar(ValorMedicao);
+				}
+				if (TipoSensor.equals("LUM")) {
+					l.processar(ValorMedicao);
+				}
+				if (TipoSensor.equals("MOV")) {
+					m.processar(Integer.parseInt(ValorMedicao+""));
+				}
 				medicoes.remove(dboobject);
 			} else {
 				Thread.sleep(2000);
@@ -116,7 +128,7 @@ public class MongoToMySQL {
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
 							+ " values (" + idAlertas++ + ", " + dataHoraMedicao + ", '" + tipoSensor + "', "
-							+ valorMedicao + ", " + limite + ", " + descricao + ", " + controlo + ", " + extra + ");");
+							+ valorMedicao + ", " + limite + ", " + descricao + ", " + 0 + ", " + extra + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {
@@ -139,22 +151,37 @@ public class MongoToMySQL {
 			public void run() {
 				String SqlCommando = new String();
 				ResultSet rs;
+				int id = 0;
 				double maxTemp = 0.0;
 				double maxHum = 0.0;
 				double maxLum = 0.0;
-				SqlCommando = "Select LimiteTemperatura as MaximoTemp from sistema;";
+				SqlCommando = "Select max(Sistema_ID) as MaxID from sistema;";
 				try {
 					SQLstatement = SQLconn.createStatement();
 					rs = SQLstatement.executeQuery(SqlCommando);
-					maxTemp = rs.getInt("Maximo") + 1; // does this work?
+					while(rs.next())
+						id = rs.getInt("MaxID");
 				} catch (Exception e) {
-					System.out.println("Erro a ler o limite máximo da temperatura. " + e);
+					System.out.println("Erro a ler o ID Máximo. " + e);
 				}
-				SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;";
+				SqlCommando = "Select LimiteTemperatura, LimiteHumidade, LimiteLuminosidade from sistema where Sistema_ID = "+id+";";
 				try {
 					SQLstatement = SQLconn.createStatement();
 					rs = SQLstatement.executeQuery(SqlCommando);
-					maxHum = rs.getInt("Maximo") + 1; // does this work?
+					while(rs.next()) {
+						maxTemp = rs.getDouble("LimiteTemperatura");
+						maxHum = rs.getDouble("LimiteHumidade");
+						maxLum = rs.getDouble("LimiteLuminosidade");
+						//System.out.println("Li os valores bro "+maxTemp+" "+maxHum+" "+maxLum);
+					}
+				} catch (Exception e) {
+					System.out.println("Erro a ler os limites máximos. " + e);
+				}
+				/*SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;";
+				try {
+					SQLstatement = SQLconn.createStatement();
+					rs = SQLstatement.executeQuery(SqlCommando);
+					maxHum = rs.getInt("id"); // does this work?
 				} catch (Exception e) {
 					System.out.println("Erro a ler o limite máximo da Humidade. " + e);
 				}
@@ -162,14 +189,19 @@ public class MongoToMySQL {
 				try {
 					SQLstatement = SQLconn.createStatement();
 					rs = SQLstatement.executeQuery(SqlCommando);
-					maxLum = rs.getInt("Maximo") + 1; // does this work?
+					maxLum = rs.getInt("id"); // does this work?
 				} catch (Exception e) {
 					System.out.println("Erro a ler o limite máximo da Luminosidade. " + e);
-				}
+				}*/
 				t.updateLimite(maxTemp);
 				l.updateLimite(maxLum);
 				h.updateLimite(maxHum);
-				
+				try { // Vou dormir um dia :)
+					Thread.sleep(86400);
+				} catch (InterruptedException e) {
+					System.err.println("Alguém acordou o verificador dos limites");
+					e.printStackTrace();
+				}
 			}
 		}).start();
 	}

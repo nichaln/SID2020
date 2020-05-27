@@ -1,12 +1,11 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Humidade {
 	
 	LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
 	LinkedList<Double> mediasAnteriores = new LinkedList<Double>();
 	
-	double limiteHumidade=130;
+	double limiteHumidade = 130;
 	double variavel = 10; //quanto maior o valor da variavel mais rapido se vai alertar
 	
 	MongoToMySQL contact;
@@ -29,7 +28,7 @@ public class Humidade {
 		if (num >= limiteHumidade) {
 			System.err.println("Alerta Vermelho - Muita húmido!!!");
 			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Está mega húmido", 0 + "", "");// Este vai ser a VERMELHO
-		} else {
+		} else { //prever
 			double media5InstantesAntes = mediasAnteriores.poll();
 			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 			if (calc >= limiteHumidade) {
