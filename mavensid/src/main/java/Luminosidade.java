@@ -29,7 +29,7 @@ public class Luminosidade {
 		if(num >= limiteLuminosidade) {
 			System.err.println("Alerta Vermelho - Bué da luz!!!");
 			contact.writeAlertaToMySQL("CELL", num+"", limiteLuminosidade+"", " Bué da luz", 0+"", ""); // Este vai ser a VERMELHO
-		}else {
+		}else if (mediasAnteriores.size()==5){ //prever apenas se a lista de medias tiver 5 elementos, não vale apena antes disso
 			double media5InstantesAntes = mediasAnteriores.poll();
 			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 			if(calc >= limiteLuminosidade) {
