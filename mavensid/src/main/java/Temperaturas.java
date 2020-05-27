@@ -62,7 +62,7 @@ public class Temperaturas {
 			}
 		}
 		
-		if(contador>0)
+		if (contador > 0)
 			contador--;
 		valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
