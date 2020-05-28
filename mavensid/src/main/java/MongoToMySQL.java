@@ -149,58 +149,57 @@ public class MongoToMySQL {
 	private void updateLimites() {
 		new Thread(new Runnable() {
 			public void run() {
-				String SqlCommando = new String();
-				ResultSet rs;
-				int id = 0;
-				double maxTemp = 0.0;
-				double maxHum = 0.0;
-				double maxLum = 0.0;
-				SqlCommando = "Select max(Sistema_ID) as MaxID from sistema;";
-				try {
-					SQLstatement = SQLconn.createStatement();
-					rs = SQLstatement.executeQuery(SqlCommando);
-					while(rs.next())
-						id = rs.getInt("MaxID");
-				} catch (Exception e) {
-					System.out.println("Erro a ler o ID Máximo. " + e);
-				}
-				SqlCommando = "Select LimiteTemperatura, LimiteHumidade, LimiteLuminosidade from sistema where Sistema_ID = "+id+";";
-				try {
-					SQLstatement = SQLconn.createStatement();
-					rs = SQLstatement.executeQuery(SqlCommando);
-					while(rs.next()) {
-						maxTemp = rs.getDouble("LimiteTemperatura");
-						maxHum = rs.getDouble("LimiteHumidade");
-						maxLum = rs.getDouble("LimiteLuminosidade");
-						//System.out.println("Li os valores bro "+maxTemp+" "+maxHum+" "+maxLum);
+				while (true) {
+					String SqlCommando = new String();
+					ResultSet rs;
+					int id = 0;
+					double maxTemp = 0.0;
+					double maxHum = 0.0;
+					double maxLum = 0.0;
+					SqlCommando = "Select max(Sistema_ID) as MaxID from sistema;";
+					try {
+						SQLstatement = SQLconn.createStatement();
+						rs = SQLstatement.executeQuery(SqlCommando);
+						while (rs.next())
+							id = rs.getInt("MaxID");
+					} catch (Exception e) {
+						System.out.println("Erro a ler o ID Máximo. " + e);
 					}
-				} catch (Exception e) {
-					System.out.println("Erro a ler os limites máximos. " + e);
-				}
-				/*SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;";
-				try {
-					SQLstatement = SQLconn.createStatement();
-					rs = SQLstatement.executeQuery(SqlCommando);
-					maxHum = rs.getInt("id"); // does this work?
-				} catch (Exception e) {
-					System.out.println("Erro a ler o limite máximo da Humidade. " + e);
-				}
-				SqlCommando = "Select LimiteLuminosidade as MaximoLum from sistema;";
-				try {
-					SQLstatement = SQLconn.createStatement();
-					rs = SQLstatement.executeQuery(SqlCommando);
-					maxLum = rs.getInt("id"); // does this work?
-				} catch (Exception e) {
-					System.out.println("Erro a ler o limite máximo da Luminosidade. " + e);
-				}*/
-				t.updateLimite(maxTemp);
-				l.updateLimite(maxLum);
-				h.updateLimite(maxHum);
-				try { // Vou dormir um dia :)
-					Thread.sleep(86400);
-				} catch (InterruptedException e) {
-					System.err.println("Alguém acordou o verificador dos limites");
-					e.printStackTrace();
+					SqlCommando = "Select LimiteTemperatura, LimiteHumidade, LimiteLuminosidade from sistema where Sistema_ID = "
+							+ id + ";";
+					try {
+						SQLstatement = SQLconn.createStatement();
+						rs = SQLstatement.executeQuery(SqlCommando);
+						while (rs.next()) {
+							maxTemp = rs.getDouble("LimiteTemperatura");
+							maxHum = rs.getDouble("LimiteHumidade");
+							maxLum = rs.getDouble("LimiteLuminosidade");
+							// System.out.println("Li os valores bro "+maxTemp+" "+maxHum+" "+maxLum);
+						}
+					} catch (Exception e) {
+						System.out.println("Erro a ler os limites máximos. " + e);
+					}
+					/*
+					 * SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;"; try {
+					 * SQLstatement = SQLconn.createStatement(); rs =
+					 * SQLstatement.executeQuery(SqlCommando); maxHum = rs.getInt("id"); // does
+					 * this work? } catch (Exception e) {
+					 * System.out.println("Erro a ler o limite máximo da Humidade. " + e); }
+					 * SqlCommando = "Select LimiteLuminosidade as MaximoLum from sistema;"; try {
+					 * SQLstatement = SQLconn.createStatement(); rs =
+					 * SQLstatement.executeQuery(SqlCommando); maxLum = rs.getInt("id"); // does
+					 * this work? } catch (Exception e) {
+					 * System.out.println("Erro a ler o limite máximo da Luminosidade. " + e); }
+					 */
+					t.updateLimite(maxTemp);
+					l.updateLimite(maxLum);
+					h.updateLimite(maxHum);
+					try { // Vou dormir um dia :)
+						Thread.sleep(86400);
+					} catch (InterruptedException e) {
+						System.err.println("Alguém acordou o verificador dos limites");
+						e.printStackTrace();
+					}
 				}
 			}
 		}).start();
