@@ -179,18 +179,6 @@ public class MongoToMySQL {
 					} catch (Exception e) {
 						System.out.println("Erro a ler os limites máximos. " + e);
 					}
-					/*
-					 * SqlCommando = "Select LimiteHumidade as MaximoHum from sistema;"; try {
-					 * SQLstatement = SQLconn.createStatement(); rs =
-					 * SQLstatement.executeQuery(SqlCommando); maxHum = rs.getInt("id"); // does
-					 * this work? } catch (Exception e) {
-					 * System.out.println("Erro a ler o limite máximo da Humidade. " + e); }
-					 * SqlCommando = "Select LimiteLuminosidade as MaximoLum from sistema;"; try {
-					 * SQLstatement = SQLconn.createStatement(); rs =
-					 * SQLstatement.executeQuery(SqlCommando); maxLum = rs.getInt("id"); // does
-					 * this work? } catch (Exception e) {
-					 * System.out.println("Erro a ler o limite máximo da Luminosidade. " + e); }
-					 */
 					t.updateLimite(maxTemp);
 					l.updateLimite(maxLum);
 					h.updateLimite(maxHum);
