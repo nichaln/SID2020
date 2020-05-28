@@ -27,7 +27,7 @@ public class Humidade {
 		double mediaAnterior = calcularMediaAnterior();
 		if (num >= limiteHumidade) {
 			System.err.println("Alerta Vermelho - Muita húmido!!!");
-			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "esta mega humido", 0 + "", "");// Este vai ser a VERMELHO
+			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "esta mega humido", 1 + "", "");// Este vai ser a VERMELHO
 		} else if (mediasAnteriores.size() == 5){ //prever apenas se a lista tiver 5 elementos, não vale apena antes disso
 			double media5InstantesAntes = mediasAnteriores.poll();
 			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;

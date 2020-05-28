@@ -16,7 +16,7 @@ public class Movimento {
 		if(num >= 1) {
 			System.err.println("Alerta Movimentos para xuxu!!!");
 			
-			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 0+"", ""); // Este vai ser a VERMELHO
+			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", ""); // Este vai ser a VERMELHO
 		}
 		if(valoresRecebidos.size() == 5)
 			valoresRecebidos.removeFirst();

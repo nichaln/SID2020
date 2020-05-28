@@ -128,7 +128,7 @@ public class MongoToMySQL {
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
 							+ " values (" + idAlertas++ + ", '" + dataHoraMedicao + "', '" + tipoSensor + "', "
-							+ valorMedicao + ", " + limite + ", " + null + ", " + 0 + ", " + null + ");");
+							+ valorMedicao + ", " + limite + ", " + null + ", " + controlo + ", " + null + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {

@@ -39,7 +39,7 @@ public class Temperaturas {
 		System.out.println("vou comparar "+num+" com "+limiteTempSup);
 		if(num >= limiteTempSup) {
 			System.err.println("Alerta HOT HOT HOT!!!");
-			contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Santarém", 0+"", ""); // Este vai ser a VERMELHO
+			contact.writeAlertaToMySQL("TEM", num+"", limiteTempSup+"", "Santarém", 1+"", ""); // Este vai ser a VERMELHO
 		} else if (!Double.isNaN(media5InstantesAntes)){ //prever
 			double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 			if(calc >= limiteTempSup) {
@@ -57,7 +57,7 @@ public class Temperaturas {
 		 */
 		if (num <= limiteTempInf) {
 			System.err.println("Alerta COLD COLD COLD!!!");
-			contact.writeAlertaToMySQL("TEM", num+"", limiteTempInf+"", "Fresquinho", 0+"", ""); // Este vai ser a VERMELHO
+			contact.writeAlertaToMySQL("TEM", num+"", limiteTempInf+"", "Fresquinho", 1+"", ""); // Este vai ser a VERMELHO
 		} else if (!Double.isNaN(media5InstantesAntes)) {
 			double calcneg = (media5InstantesAntes - mediaAnterior) * variavel + num;
 			if (calcneg <= limiteTempInf) {
