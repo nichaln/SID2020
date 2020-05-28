@@ -13,10 +13,12 @@ public class Movimento {
 	
 		
 	public void processar(Double num) {//TODO Falta verificar se não há rondas e cenas em todos estes coisos
-		if(num >= 1) {
+		
+		if(num >= 1 && valoresRecebidos.removeLast() >= 1) { // Assim só mete um erro se houverem dois "movimentos" de seguida
+			//FIXME temos que mudar para fazer isto no cloud to mongo, para ficar mesmo como "erro"
 			System.err.println("Alerta Movimentos para xuxu!!!");
 			
-			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", ""); // Este vai ser a VERMELHO
+			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", "");
 		}
 		if(valoresRecebidos.size() == 5)
 			valoresRecebidos.removeFirst();

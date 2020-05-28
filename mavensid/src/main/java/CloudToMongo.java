@@ -1,7 +1,6 @@
 import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Random;
@@ -96,17 +95,10 @@ public class CloudToMongo implements MqttCallback {
 		errosRajadaLum = 0;
 	}
 
-	public void messageArrived(String topic, MqttMessage c) throws Exception {
-
+	public void messageArrived(String topic, MqttMessage c) {
 		try {
-			DBObject document_json;
-
-//			document_json = (DBObject) JSON.parse(clean(c.toString()));
-//			System.out.println(c.toString());
 			receberMensagem(c.toString());
-//			mongocol.insert(document_json);
 		} catch (Exception e) {
-			System.out.println(e);
 			e.printStackTrace();
 		}
 	}
@@ -136,8 +128,7 @@ public class CloudToMongo implements MqttCallback {
 		}
 		String[] auxTime = parsed[2].split("/");
 		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3]; // TODO valor
-		// 2020-05-14 14:25:1 // correspondente do
-		// timestamp
+		// 2020-05-14 14:25:1  -  correspondente do timestamp
 		System.out.println(timestamp);
 		System.out.println(mensagem);
 		
@@ -157,7 +148,7 @@ public class CloudToMongo implements MqttCallback {
 		m.setDate(valorDat + " " + valorTim);
 		System.out.println("DATE SET: " + valorDat + " " + valorTim);
 
-		boolean dataValida = true;
+		boolean dataValida = true; //FIXME temos actually validar as datas
 		/* ver se a data é maior do que da medicao anterior */
 //		Date data = new Date(Integer.parseInt(valorDat.split("/")[2]),Integer.parseInt(valorDat.split("/")[1]),
 //				Integer.parseInt(valorDat.split("/")[0]),Integer.parseInt(valorTim.split(":")[0]),
@@ -211,7 +202,7 @@ public class CloudToMongo implements MqttCallback {
 			mongocolerros.insert(document);
 		}
 
-		// TODO Parse data
+		//Parse data :)
 
 		if (verify(valorCel, 'c', timestamp) && dataValida) {
 			m.setMedicaoLuminosidade("" + Integer.parseInt(valorCel));
@@ -302,7 +293,7 @@ public class CloudToMongo implements MqttCallback {
 				ultimaMedicaoTemp = leitura;
 				errosRajadaTemp = 0;
 				return true;
-			} else {//
+			} else { //
 				errosRajadaTemp++;
 				return false;
 			}
@@ -409,8 +400,7 @@ public class CloudToMongo implements MqttCallback {
 		if (startup) {
 			return true;
 		}
-		if (Math.abs(leitura - ultimaMedicaoTemp) > VARIACAO_MAXIMA_TEMPERATURA
-				+ VARIACAO_MAXIMA_TEMPERATURA * errosRajadaTemp) {// este 5 tem de ser falado
+		if (Math.abs(leitura - ultimaMedicaoTemp) > VARIACAO_MAXIMA_TEMPERATURA	+ VARIACAO_MAXIMA_TEMPERATURA * errosRajadaTemp) {
 			// aconteceu um erro de leitura elevada
 			return false;
 		} else {
@@ -422,8 +412,7 @@ public class CloudToMongo implements MqttCallback {
 		if (startup) {
 			return true;
 		}
-		if (Math.abs(leitura - ultimaMedicaoHum) > VARIACAO_MAXIMA_HUMIDADE
-				+ VARIACAO_MAXIMA_HUMIDADE * errosRajadaHum) {// este 5 tem de ser falado
+		if (Math.abs(leitura - ultimaMedicaoHum) > VARIACAO_MAXIMA_HUMIDADE	+ VARIACAO_MAXIMA_HUMIDADE * errosRajadaHum) {
 			// aconteceu um erro de leitura elevada
 			return false;
 		} else {
@@ -433,12 +422,12 @@ public class CloudToMongo implements MqttCallback {
 
 	private boolean checkValidValueLuminosidade(Double leitura) {
 		if (startup) {
-			startup = false;// tá aqui porque a lum é a ultima a ser verificado
+			startup = false; // tá aqui porque a lum é a ultima a ser verificado
 			return true;
 		}
-		if (Math.abs(leitura - ultimaMedicaoLum) > VARIACAO_MAXIMA_LUMINOSIDADE
-				+ VARIACAO_MAXIMA_LUMINOSIDADE * errosRajadaHum) {// este 5 tem de ser falado
-			// aconteceu um erro de leitura elevada
+		if (Math.abs(leitura - ultimaMedicaoLum) > VARIACAO_MAXIMA_LUMINOSIDADE + VARIACAO_MAXIMA_LUMINOSIDADE * errosRajadaLum 
+				|| leitura < 0) {
+			// aconteceu um erro de leitura elevada ou de valor negativo
 			return false;
 		} else {
 			return true;

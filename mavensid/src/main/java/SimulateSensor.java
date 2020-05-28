@@ -29,11 +29,11 @@ public class SimulateSensor implements MqttCallback
             System.out.println("Error reading SimulateSensor.ini file " + obj);
             JOptionPane.showMessageDialog(null, "The SimulateSensor.ini file wasn't found.", "Mongo To Cloud", 0);
         }
-        new SimulateSensor().connecCloud();
+        new SimulateSensor().connectCloud();
         new SimulateSensor().writeSensor();
     }
     
-    public void connecCloud() {
+    public void connectCloud() {
         try {
             (SimulateSensor.mqttclient = new MqttClient(SimulateSensor.cloud_server, "SimulateSensor" + SimulateSensor.cloud_topic)).connect();
             SimulateSensor.mqttclient.setCallback((MqttCallback)this);
@@ -48,7 +48,7 @@ public class SimulateSensor implements MqttCallback
         final String s = new String();
         LocalDate.now();
         LocalTime.now();
-        while (true) {
+        //while (true) {
             double d = 18.0;
             while (d < 50.0) {
                 final String string = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 0 + "\",\"sens\":\"eth\"}";
@@ -150,7 +150,7 @@ public class SimulateSensor implements MqttCallback
             }
             catch (InterruptedException ex15) {}
             this.publishSensor(string15);
-        }
+        //}
     }
     
     public void publishSensor(final String s) {

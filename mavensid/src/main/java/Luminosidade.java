@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Luminosidade {
 	
@@ -20,7 +19,7 @@ public class Luminosidade {
 		for (int i = 0; i != mediasAnteriores.size(); i++) {
 			sum += valoresRecebidos.get(i);
 		}
-		System.out.println("media valores recebidos anterior:" + sum / mediasAnteriores.size());
+		//System.out.println("media valores recebidos anterior:" + sum / mediasAnteriores.size());
 		return sum / mediasAnteriores.size();
 	}
 
