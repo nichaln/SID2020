@@ -50,7 +50,7 @@ public class Temperaturas {
 			}
 			if (!Double.isNaN(media3InstantesAntes)) { // prever aumento
 				double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
-				if (calc >= limiteTempSup && contadorAmarelo == 0) {
+				if (calc >= limiteTempSup && contadorAmarelo == 0 && num < limiteTempSup) {
 					System.err.println("Alerta Temperatura a aumentar!!!");
 					contadorAmarelo = ESPACAMENTO_ENTRE_ALERTAS;
 					// TODO Alerta Temp alta

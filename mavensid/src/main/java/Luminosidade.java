@@ -41,7 +41,7 @@ public class Luminosidade {
 			if (mediasAnteriores.size() == 5) { // prever apenas se a lista de medias tiver 5 elementos, não vale apena antes disso
 				double media5InstantesAntes = mediasAnteriores.poll();
 				double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
-				if (calc >= limiteLuminosidade && contadorAmarelo==0) {
+				if (calc >= limiteLuminosidade && contadorAmarelo==0 && num <limiteLuminosidade) {
 					System.err.println("Alerta Amarelo - Vai ficar bué luz!!!");
 					contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Vai ficar bué luz", 0 + "",""); // Este vai ser a AMARELO
 					contadorAmarelo = ESPACAMENTO_ENTRE_ALERTAS;
