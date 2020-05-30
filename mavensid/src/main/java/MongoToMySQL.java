@@ -67,8 +67,20 @@ public class MongoToMySQL {
 	}
 
 	public void readFromMongo() throws InterruptedException {
+		String SqlCommando = new String();
+		ResultSet rs;
+		int i=0;
+		SqlCommando = "Select max(IDMedicao) as maxID from medicoessensores;";
+		try {
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while(rs.next()) {
+				i = rs.getInt("maxID") +1;
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao obter id maximo da tabela medicoessensores " + e);
+		}
 		DBObject dboobject;
-		int i = 0;
 		while (true) {
 //			DBCursor cursor = medicoes.find();
 
@@ -122,6 +134,19 @@ public class MongoToMySQL {
 
 	public void writeAlertaToMySQL(String tipoSensor, String valorMedicao, String limite, String descricao,
 			String controlo, String extra) {
+		String SqlCommando = new String();
+		ResultSet rs;
+		int i=0;
+		SqlCommando = "Select max(ID) as maxID from alerta;";
+		try {
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while(rs.next()) {
+				i = rs.getInt("maxID") +1;
+			}
+		} catch (Exception e) {
+			System.out.println("Erro ao obter id maximo da tabela alerta " + e);
+		}
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = new Date(System.currentTimeMillis());
 		String dataHoraMedicao = formatter.format(date);
@@ -129,7 +154,7 @@ public class MongoToMySQL {
 			SQLstatement = SQLconn.createStatement();
 			SQLstatement.executeUpdate(
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
-							+ " values (" + idAlertas++ + ", '" + dataHoraMedicao + "', '" + tipoSensor + "', "
+							+ " values (" + i++ + ", '" + dataHoraMedicao + "', '" + tipoSensor + "', "
 							+ valorMedicao + ", " + limite + ", " + null + ", " + controlo + ", " + null + ");");
 
 			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
