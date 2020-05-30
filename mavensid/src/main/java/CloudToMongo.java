@@ -46,7 +46,7 @@ public class CloudToMongo implements MqttCallback {
 	private int errosRajadaHum;
 	private int errosRajadaLum;
 
-	private boolean startup = true;
+	private boolean startup = true, testing = false;
 
 	public static void main(String[] args) {
 
@@ -78,8 +78,10 @@ public class CloudToMongo implements MqttCallback {
 			mqttclient = new MqttClient(cloud_server, "CloudToMongo_" + String.valueOf(i) + "_" + cloud_topic);
 			mqttclient.connect();
 			mqttclient.setCallback(this);
-			//mqttclient.subscribe(cloud_topic);
-			mqttclient.subscribe("/grupo26topico");
+			if(testing)
+				mqttclient.subscribe("/grupo26topico");
+			else
+				mqttclient.subscribe(cloud_topic);
 		} catch (MqttException e) {
 			e.printStackTrace();
 		}

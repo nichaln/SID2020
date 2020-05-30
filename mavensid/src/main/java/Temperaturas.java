@@ -1,5 +1,4 @@
 import java.util.LinkedList;
-import java.util.Scanner;
 
 public class Temperaturas {
 	LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
@@ -31,14 +30,11 @@ public class Temperaturas {
 	public void processar(double num) {
 
 		double mediaAnterior = calcularMediaAnterior(); // Media que vai entrar
-		double media5InstantesAntes = Double.NaN; // É preciso inicializar a NaN para termos uma condição em baixo para
-													// não prever
-													// antes de ter 5 elementos na lista
+		double media3InstantesAntes = Double.NaN; // É preciso inicializar a NaN para termos uma condição em baixo para
+													// não prever antes de ter 3 elementos na lista
 
-		if (mediasAnteriores.size() == 5) {
-			media5InstantesAntes = mediasAnteriores.poll(); // Media que vai sair da lista, isto só acontece depois de 5
-															// ciclos
-		}
+		if (mediasAnteriores.size() == 3) 
+			media3InstantesAntes = mediasAnteriores.poll(); // Media que vai sair da lista, isto só acontece depois de 3
 		/*
 		 * Aqui vemos para o quente
 		 */
@@ -52,8 +48,8 @@ public class Temperaturas {
 			if (contadorVermelho > 0) {
 				contadorVermelho--;
 			}
-			if (!Double.isNaN(media5InstantesAntes)) { // prever aumento
-				double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
+			if (!Double.isNaN(media3InstantesAntes)) { // prever aumento
+				double calc = (mediaAnterior - media3InstantesAntes) * variavel + num;
 				if (calc >= limiteTempSup && contadorAmarelo == 0) {
 					System.err.println("Alerta Temperatura a aumentar!!!");
 					contadorAmarelo = ESPACAMENTO_ENTRE_ALERTAS;
@@ -79,8 +75,8 @@ public class Temperaturas {
 			if(contadorVermelho > 0) {
 				contadorVermelho--;
 			}
-			if (!Double.isNaN(media5InstantesAntes)) {
-				double calcneg = (media5InstantesAntes - mediaAnterior) * variavel + num;
+			if (!Double.isNaN(media3InstantesAntes)) {
+				double calcneg = (media3InstantesAntes - mediaAnterior) * variavel + num;
 				if (calcneg <= limiteTempInf && contadorAmarelo == 0) {
 					System.err.println("Alerta Temperatura a diminuir!!!");
 					// TODO Alerta Temp baixa
@@ -93,10 +89,10 @@ public class Temperaturas {
 				}
 			}
 		}
-		if (valoresRecebidos.size() == 5)
+		if (valoresRecebidos.size() == 3)
 			valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
-		if (mediasAnteriores.size() == 5)
+		if (mediasAnteriores.size() == 3)
 			mediasAnteriores.removeFirst();
 		mediasAnteriores.addLast(mediaAnterior);
 

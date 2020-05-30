@@ -30,7 +30,7 @@ public class Luminosidade {
 
 	public void processar(double num) { // TODO Falta verificar se não há rondas e cenas em todos estes coisos
 		double mediaAnterior = calcularMediaAnterior();
-		if (num >= limiteLuminosidade && contadorVermelho == 0) {
+		if (num >= limiteLuminosidade && contadorVermelho == 0/*&& !contact.verRondas(dataHoraMedicao)*/) {//ahhhh não temos hora aqui
 			System.err.println("Alerta Vermelho - Bué da luz!!!");
 			contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", " Bué da luz", 1 + "", ""); // Este vai ser a vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;

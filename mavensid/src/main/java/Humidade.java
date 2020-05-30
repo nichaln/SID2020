@@ -36,7 +36,7 @@ public class Humidade {
 			if(contadorVermelho > 0) {
 				contadorVermelho--;
 			}
-			if (mediasAnteriores.size() == 5) { // prever apenas se a lista tiver 5 elementos, não vale a pena antes disso
+			if (mediasAnteriores.size() == 3) { // prever apenas se a lista tiver 5 elementos, não vale a pena antes disso
 				double media5InstantesAntes = mediasAnteriores.poll();
 				double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 				if (calc >= limiteHumidade && contadorAmarelo==0) {
@@ -51,10 +51,10 @@ public class Humidade {
 				}
 			}
 		}
-		if (valoresRecebidos.size() == 5)
+		if (valoresRecebidos.size() == 3)
 			valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
-		if (mediasAnteriores.size() == 5)
+		if (mediasAnteriores.size() == 3)
 			mediasAnteriores.removeFirst();
 		mediasAnteriores.addLast(mediaAnterior);
 	}

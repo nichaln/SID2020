@@ -11,6 +11,7 @@ import java.text.*;
 public class MongoToMySQL {
 
 	public LinkedList<Medicao> medicoesSensores = new LinkedList<Medicao>();
+	LinkedList<Date> rondas = new LinkedList<Date>();
 	Temperaturas t = new Temperaturas(this);
 	Humidade h = new Humidade(this);
 	Luminosidade l = new Luminosidade(this);
@@ -135,57 +136,85 @@ public class MongoToMySQL {
 			System.out.println("Erro a escrever um alerta. " + e);
 		}
 	}
-
-	public void separarMedicoes() {
-		for (Medicao ms : medicoesSensores) {
-			t.processar(Double.parseDouble(ms.getMedicaoTemperatura()));
-			h.processar(Double.parseDouble(ms.getMedicaoHumidade()));
-			l.processar(Double.parseDouble(ms.getMedicaoLuminosidade()));
-			m.processar(Double.parseDouble(ms.getMedicaoMovimento()));
-
+	
+	public boolean verRondas(Date dataHoraMedicao) {
+		Date datafinal = new Date(dataHoraMedicao.getTime()+180000);
+		obterRondasPlaneadas();
+		obterRondasExtras();
+		for(Date dh : rondas) {
+			if( !(dh.before(dataHoraMedicao) || dh.after(datafinal)))
+				return true;
 		}
+		return false;
+	}
+
+	
+	public void obterRondasPlaneadas() {
+		
+	}
+	
+	public void obterRondasExtras() {
+		String SqlCommando = new String();
+		ResultSet rs;
+		SqlCommando = "Select DataHora from rondaextra;";
+		try {
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while (rs.next()) {
+				Date datahora = new Date(rs.getTimestamp("DataHora").getTime());
+				System.out.println("Adicionei " + datahora + " às rondas");
+				rondas.add(datahora);
+			}
+		} catch (Exception e) {
+			System.out.println("Erro a verificar se há ronda. " + e);
+		}
+		
 	}
 
 	private void updateLimites() {
+		String SqlCommando = new String();
+		ResultSet rs;
+		int id = 0;
+		double maxTemp = 0.0;
+		double maxHum = 0.0;
+		double maxLum = 0.0;
+		SqlCommando = "Select max(Sistema_ID) as MaxID from sistema;";
+		try {
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while (rs.next())
+				id = rs.getInt("MaxID");
+		} catch (Exception e) {
+			System.out.println("Erro a ler o ID Máximo. " + e);
+		}
+		SqlCommando = "Select LimiteTemperatura, LimiteHumidade, LimiteLuminosidade from sistema where Sistema_ID = "
+				+ id + ";";
+		try {
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while (rs.next()) {
+				maxTemp = rs.getDouble("LimiteTemperatura");
+				maxHum = rs.getDouble("LimiteHumidade");
+				maxLum = rs.getDouble("LimiteLuminosidade");
+			}
+		} catch (Exception e) {
+			System.out.println("Erro a ler os limites máximos. " + e);
+		}
+		t.updateLimite(maxTemp);
+		l.updateLimite(maxLum);
+		h.updateLimite(maxHum);
+	}
+	
+	private void startUpdates() {
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					String SqlCommando = new String();
-					ResultSet rs;
-					int id = 0;
-					double maxTemp = 0.0;
-					double maxHum = 0.0;
-					double maxLum = 0.0;
-					SqlCommando = "Select max(Sistema_ID) as MaxID from sistema;";
-					try {
-						SQLstatement = SQLconn.createStatement();
-						rs = SQLstatement.executeQuery(SqlCommando);
-						while (rs.next())
-							id = rs.getInt("MaxID");
-					} catch (Exception e) {
-						System.out.println("Erro a ler o ID Máximo. " + e);
-					}
-					SqlCommando = "Select LimiteTemperatura, LimiteHumidade, LimiteLuminosidade from sistema where Sistema_ID = "
-							+ id + ";";
-					try {
-						SQLstatement = SQLconn.createStatement();
-						rs = SQLstatement.executeQuery(SqlCommando);
-						while (rs.next()) {
-							maxTemp = rs.getDouble("LimiteTemperatura");
-							maxHum = rs.getDouble("LimiteHumidade");
-							maxLum = rs.getDouble("LimiteLuminosidade");
-							// System.out.println("Li os valores bro "+maxTemp+" "+maxHum+" "+maxLum);
-						}
-					} catch (Exception e) {
-						System.out.println("Erro a ler os limites máximos. " + e);
-					}
-					t.updateLimite(maxTemp);
-					l.updateLimite(maxLum);
-					h.updateLimite(maxHum);
+					updateLimites();
+					obterRondasPlaneadas();
 					try { // Vou dormir um dia :)
-						Thread.sleep(86400);
+						Thread.sleep(8640000);
 					} catch (InterruptedException e) {
-						System.err.println("Alguém acordou o verificador dos limites");
+						System.err.println("Alguém acordou o leitor");
 						e.printStackTrace();
 					}
 				}
@@ -193,12 +222,13 @@ public class MongoToMySQL {
 		}).start();
 	}
 
+
 	public static void main(String[] args) throws InterruptedException {
 		MongoToMySQL m = new MongoToMySQL();
 		m.connectToMongo();
 		m.connectToMySQL();
-		m.updateLimites();
 		m.readFromMongo();
+		m.startUpdates();
 	}
 
 }
