@@ -30,7 +30,7 @@ public class Humidade {
 		double mediaAnterior = calcularMediaAnterior();
 		if (num >= limiteHumidade && contadorVermelho == 0) {
 			System.err.println("Alerta Vermelho - Muita húmido!!!");
-			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "esta mega humido", 1 + "", "");
+			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Humidade acima do limite", 1 + "", "");
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {
 			if(contadorVermelho > 0) {
@@ -42,7 +42,7 @@ public class Humidade {
 				if (calc >= limiteHumidade && contadorAmarelo==0 && num < limiteHumidade) {
 					System.err.println("Alerta amarelo - vai ficar húmido!!!");
 					// TODO Alerta da humidade
-					contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Vai ficar muita húmido", 0 + "","");
+					contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Humidade a aumentar", 0 + "","");
 					contadorAmarelo =  ESPACAMENTO_ENTRE_ALERTAS;
 				}else {
 					if (contadorAmarelo > 0) {

@@ -32,7 +32,7 @@ public class Luminosidade {
 		double mediaAnterior = calcularMediaAnterior();
 		if (num >= limiteLuminosidade && contadorVermelho == 0 && !contact.verRondas()) {
 			System.err.println("Alerta Vermelho - Bué da luz!!!");
-			contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", " Bué da luz", 1 + "", ""); // Este vai ser a vermelho
+			contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Luminosidade acima do limite", 1 + "", ""); // Este vai ser a vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {
 			if(contadorVermelho > 0) {
@@ -43,7 +43,7 @@ public class Luminosidade {
 				double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 				if (calc >= limiteLuminosidade && contadorAmarelo==0 && num <limiteLuminosidade) {
 					System.err.println("Alerta Amarelo - Vai ficar bué luz!!!");
-					contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Vai ficar bué luz", 0 + "",""); // Este vai ser a AMARELO
+					contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Luminosidade a aumentar", 0 + "",""); // Este vai ser a AMARELO
 					contadorAmarelo = ESPACAMENTO_ENTRE_ALERTAS;
 				}
 				else {

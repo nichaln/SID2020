@@ -41,7 +41,7 @@ public class Temperaturas {
 		// System.out.println("vou comparar " + num + " com " + limiteTempSup);
 		if (num >= limiteTempSup && contadorVermelho == 0) {
 			System.err.println("Alerta HOT HOT HOT!!!");
-			contact.writeAlertaToMySQL("TEM", num + "", limiteTempSup + "", "Santarém", 1 + "", ""); // Este vai ser a
+			contact.writeAlertaToMySQL("TEM", num + "", limiteTempSup + "", "Temperatura acima do limite", 1 + "", ""); // Este vai ser a
 																										// vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {
@@ -68,7 +68,7 @@ public class Temperaturas {
 		 */
 		if (num <= limiteTempInf && contadorVermelho == 0) {
 			System.err.println("Alerta COLD COLD COLD!!!");
-			contact.writeAlertaToMySQL("TEM", num + "", limiteTempInf + "", "Fresquinho", 1 + "", ""); // Este vai ser a
+			contact.writeAlertaToMySQL("TEM", num + "", limiteTempInf + "", "Temperatura demasiado baixa", 1 + "", ""); // Este vai ser a
 																										// vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {
