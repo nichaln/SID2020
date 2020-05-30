@@ -26,6 +26,8 @@ public class MongoToMySQL {
 
 	static Connection SQLconn;
 	static Statement SQLstatement;
+	
+	private static final int LIMITE_RONDA = 15;
 
 	public void connectToMongo() {
 		try {
@@ -163,8 +165,10 @@ public class MongoToMySQL {
 		}
 	}
 	
-	public boolean verRondas(Date dataHoraMedicao) {
-		Date datafinal = new Date(dataHoraMedicao.getTime()+180000);
+	public boolean verRondas() {
+		rondas.clear();
+		Date dataHoraMedicao = new Date(System.currentTimeMillis());
+		Date datafinal = new Date(dataHoraMedicao.getTime() + LIMITE_RONDA * 6000);
 		obterRondasPlaneadas();
 		obterRondasExtras();
 		for(Date dh : rondas) {
@@ -175,7 +179,7 @@ public class MongoToMySQL {
 	}
 	
 	
-	//Não tá a funcionar porque não arranjei maneira de juntar o dia e a hora no Date
+	// Já funciona bué broooo
 	public void obterRondasPlaneadas() {
 		String SqlCommando = new String();
 		ResultSet rs;
@@ -192,20 +196,30 @@ public class MongoToMySQL {
 			while (rs.next()) {
 				int diaSemana = rs.getInt("diaSemana");
 				switch (diaSemana) {
-				case 0: nomeDoDia = "segunda";
-						break;
-				case 1: nomeDoDia = "terca";
-						break;
-				case 2: nomeDoDia = "quarta";
-						break;
-				case 3: nomeDoDia = "quinta";
-						break;
-				case 4: nomeDoDia = "sexta";
-						break;
-				case 5: nomeDoDia = "sabado";
-						break;
-				case 6: nomeDoDia = "domingo";
-						break;
+				case 0:
+					nomeDoDia = "segunda";
+					break;
+				case 1:
+					nomeDoDia = "terca";
+					break;
+				case 2:
+					nomeDoDia = "quarta";
+					break;
+				case 3:
+					nomeDoDia = "quinta";
+					break;
+				case 4:
+					nomeDoDia = "sexta";
+					break;
+				case 5:
+					nomeDoDia = "sabado";
+					break;
+				case 6:
+					nomeDoDia = "domingo";
+					break;
+				default:
+					break;
+
 				}
 				
 			}
@@ -214,13 +228,12 @@ public class MongoToMySQL {
 			rs = SQLstatement.executeQuery(SqlCommando);
 			while (rs.next()) {
 				String diaDaSemana = rs.getString("dia"); //Variavel dia apanhada do SQL
+				Time horas = rs.getTime("hora");
 				if (diaDaSemana == nomeDoDia) { // apartir desta comparação para ver se o diaDaSemana retirado da tabela SQL é igual ao nomeDoDia descoberto em cima
-					
-					//Vai fazer a comparação feita no verRondas e devolve o verdadeiro ou falso, algo parecido com o em baixo
-					
-					/*if( !(dh.before(dataHoraMedicao) || dh.after(datafinal)))
-						return true;*/
-					
+					Date aux = Date.valueOf(formatter.format(new Date(System.currentTimeMillis())));
+					Date datahora = new Date(aux.getTime()+horas.getTime());
+					System.out.println("Adicionei " + datahora + " às rondas from planeadas");
+					rondas.add(datahora);
 					}
 			}
 		} catch (Exception e) {
@@ -237,7 +250,7 @@ public class MongoToMySQL {
 			rs = SQLstatement.executeQuery(SqlCommando);
 			while (rs.next()) {
 				Date datahora = new Date(rs.getTimestamp("DataHora").getTime());
-				System.out.println("Adicionei " + datahora + " às rondas");
+				System.out.println("Adicionei " + datahora + " às rondas from extras");
 				rondas.add(datahora);
 			}
 		} catch (Exception e) {
