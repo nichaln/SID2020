@@ -1,5 +1,6 @@
 import java.io.FileInputStream;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Properties;
 
@@ -39,9 +40,9 @@ public class MongoToMySQL {
 			JOptionPane.showMessageDialog(null, "The CloudToMongo.ini file wasn't found.", "CloudToMongo",
 					JOptionPane.ERROR_MESSAGE);
 		}
-
-		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host));
-
+		
+//		MongoClient mongoClient1 = new MongoClient(new MongoClientURI(mongo_host));
+		MongoClient mongoClient1 = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
 		DB db = mongoClient1.getDB(mongo_database);
 		medicoes = db.getCollection(mongo_collection); // Coleção das Medições
 	}

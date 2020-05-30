@@ -1,6 +1,7 @@
 import java.io.FileInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Random;
@@ -19,6 +20,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import com.mongodb.ServerAddress;
 
 public class CloudToMongo implements MqttCallback {
 	MqttClient mqttclient;
@@ -88,7 +90,8 @@ public class CloudToMongo implements MqttCallback {
 	}
 
 	public void connectMongo() {
-		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
+//		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
+		mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
 		db = mongoClient.getDB(mongo_database);
 		mongocolmedicoes = db.getCollection(mongo_collection_medicoes);
 		mongocolerros = db.getCollection(mongo_collection_erros);
