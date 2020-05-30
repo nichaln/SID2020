@@ -1,3 +1,6 @@
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+
 public class Movimento {
 	//LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
 	
@@ -13,7 +16,9 @@ public class Movimento {
 		
 	public void processar(Double num) {//TODO Falta verificar se não há rondas e cenas em todos estes coisos
 		
-		if(num >= 1 && contador == 0 /*&& !contact.verRondas(dataHoraMedicao)*/) {//ahhhhhhh não temos datahora aqui
+		Date dataHoraMedicao = new Date(System.currentTimeMillis());
+		
+		if(num >= 1 && contador == 0 && !contact.verRondas(dataHoraMedicao)) {//ahhhhhhh não temos datahora aqui, será que já temos? 
 			System.err.println("Alerta Movimentos para xuxu!!!");
 			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", "");
 			contador=ESPACAMENTO_ENTRE_ALERTAS;

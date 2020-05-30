@@ -173,10 +173,59 @@ public class MongoToMySQL {
 		}
 		return false;
 	}
-
 	
+	
+	//Não tá a funcionar porque não arranjei maneira de juntar o dia e a hora no Date
 	public void obterRondasPlaneadas() {
-		
+		String SqlCommando = new String();
+		ResultSet rs;
+		try {
+			// descobrir o dia da semana de "hoje"
+			SQLstatement = SQLconn.createStatement();
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			Date date = new Date(System.currentTimeMillis());
+			String dataFormatada = formatter.format(date);
+			SqlCommando = "Select weekday (" + dataFormatada + ") as diaSemana;";
+			SQLstatement = SQLconn.createStatement();
+			rs = SQLstatement.executeQuery(SqlCommando);
+			String nomeDoDia = null; // String a comparar com o dia retirado da tabela SQL
+			while (rs.next()) {
+				int diaSemana = rs.getInt("diaSemana");
+				switch (diaSemana) {
+				case 0: nomeDoDia = "segunda";
+						break;
+				case 1: nomeDoDia = "terca";
+						break;
+				case 2: nomeDoDia = "quarta";
+						break;
+				case 3: nomeDoDia = "quinta";
+						break;
+				case 4: nomeDoDia = "sexta";
+						break;
+				case 5: nomeDoDia = "sabado";
+						break;
+				case 6: nomeDoDia = "domingo";
+						break;
+				}
+				
+			}
+			SqlCommando = "Select DiaSemana_HoraRonda_ as hora, DiaSemana_DiaSemana_ as dia from rondaplaneada;"; //Ir buscar a data da ronda planeada para comparar
+			//Ver se ha ronda planeada no dia de semana de hoje.
+			rs = SQLstatement.executeQuery(SqlCommando);
+			while (rs.next()) {
+				String diaDaSemana = rs.getString("dia"); //Variavel dia apanhada do SQL
+				if (diaDaSemana == nomeDoDia) { // apartir desta comparação para ver se o diaDaSemana retirado da tabela SQL é igual ao nomeDoDia descoberto em cima
+					
+					//Vai fazer a comparação feita no verRondas e devolve o verdadeiro ou falso, algo parecido com o em baixo
+					
+					/*if( !(dh.before(dataHoraMedicao) || dh.after(datafinal)))
+						return true;*/
+					
+					}
+			}
+		} catch (Exception e) {
+			System.out.println("Erro a verificar se há ronda." + e);
+		}
 	}
 	
 	public void obterRondasExtras() {
