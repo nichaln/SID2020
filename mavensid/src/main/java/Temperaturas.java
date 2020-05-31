@@ -40,7 +40,7 @@ public class Temperaturas {
 		 */
 		// System.out.println("vou comparar " + num + " com " + limiteTempSup);
 		if (num >= limiteTempSup && contadorVermelho == 0) {
-			System.err.println("Alerta HOT HOT HOT!!!");
+			System.err.println("Alerta temperatura acima do limite");
 			contact.writeAlertaToMySQL("TEM", num + "", limiteTempSup + "", "Temperatura acima do limite", 1 + "", ""); // Este vai ser a
 																										// vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
@@ -67,7 +67,7 @@ public class Temperaturas {
 		 * Aqui vemos para o frio
 		 */
 		if (num <= limiteTempInf && contadorVermelho == 0) {
-			System.err.println("Alerta COLD COLD COLD!!!");
+			System.err.println("Alerta temperatura abaixo do limite inferior!!!");
 			contact.writeAlertaToMySQL("TEM", num + "", limiteTempInf + "", "Temperatura demasiado baixa", 1 + "", ""); // Este vai ser a
 																										// vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;

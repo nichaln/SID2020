@@ -31,18 +31,18 @@ public class Luminosidade {
 	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
 		if (num >= limiteLuminosidade && contadorVermelho == 0 && !contact.verRondas()) {
-			System.err.println("Alerta Vermelho - Bué da luz!!!");
+			System.err.println("Alerta Vermelho - Muita da luz!!!");
 			contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Luminosidade acima do limite", 1 + "", ""); // Este vai ser a vermelho
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {
 			if(contadorVermelho > 0) {
 				contadorVermelho--;
 			}
-			if (mediasAnteriores.size() == 5) { // prever apenas se a lista de medias tiver 5 elementos, não vale apena antes disso
+			if (mediasAnteriores.size() == 3) { // prever apenas se a lista de medias tiver 5 elementos, não vale apena antes disso
 				double media5InstantesAntes = mediasAnteriores.poll();
 				double calc = (mediaAnterior - media5InstantesAntes) * variavel + num;
 				if (calc >= limiteLuminosidade && contadorAmarelo==0 && num <limiteLuminosidade) {
-					System.err.println("Alerta Amarelo - Vai ficar bué luz!!!");
+					System.err.println("Alerta Amarelo - Vai ficar muita luz!!!");
 					contact.writeAlertaToMySQL("CEL", num + "", limiteLuminosidade + "", "Luminosidade a aumentar", 0 + "",""); // Este vai ser a AMARELO
 					contadorAmarelo = ESPACAMENTO_ENTRE_ALERTAS;
 				}
@@ -53,10 +53,10 @@ public class Luminosidade {
 				}
 			}
 		}
-		if (valoresRecebidos.size() == 5)
+		if (valoresRecebidos.size() == 3)
 			valoresRecebidos.removeFirst();
 		valoresRecebidos.addLast(num);
-		if (mediasAnteriores.size() == 5)
+		if (mediasAnteriores.size() == 3)
 			mediasAnteriores.removeFirst();
 		mediasAnteriores.addLast(mediaAnterior);
 	}

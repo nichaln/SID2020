@@ -1,9 +1,4 @@
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-
 public class Movimento {
-	//LinkedList<Double> valoresRecebidos = new LinkedList<Double>();
-	
 	double variavel = 10;//quanto maior o valor da variavel mais rapido se vai alertar
 	int contador = 0; //contador para nao tar sempre a enviar alertas
 	private static final int ESPACAMENTO_ENTRE_ALERTAS=10;
@@ -15,41 +10,17 @@ public class Movimento {
 	
 		
 	public void processar(Double num) {
-		if(num >= 1 && contador == 0/* && !contact.verRondas()*/) {
-			if(!contact.verRondas()) {
-				System.out.println("#################################################################");
-				System.out.println("#################################################################");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
-				System.out.println("#################################################################");
-				System.out.println("#################################################################");
-				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("-----------------------------------------------------------------");
-				System.out.println("#################################################################");
-				System.out.println("#################################################################");
+		if(num >= 1 && contador == 0) {
+			if(contact.verRondas()) {
+				System.err.println("NÃO ESCREVI PORQUE HAVIA RONDA");
 				return;
 			}
-			System.err.println("Alerta Movimentos para xuxu!!!");
+			System.err.println("Alerta Movimentos!!!");
 			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", "");
 			contador=ESPACAMENTO_ENTRE_ALERTAS;
 		}else {
 			if(contador>0)
 				contador--;
 		}
-		/*if(valoresRecebidos.size() == 3)
-			valoresRecebidos.removeFirst();
-		valoresRecebidos.addLast(num);*/
 	}
 }

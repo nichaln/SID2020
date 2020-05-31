@@ -48,7 +48,7 @@ public class CloudToMongo implements MqttCallback {
 	private int errosRajadaHum;
 	private int errosRajadaLum;
 
-	private boolean startup = true, testing = false;
+	private boolean startup = true, testing = true;
 
 	public static void main(String[] args) {
 
@@ -132,8 +132,7 @@ public class CloudToMongo implements MqttCallback {
 			parsed[i] = vetor[i].split("\":\"")[1].replaceAll("\"", "");
 		}
 		String[] auxTime = parsed[2].split("/");
-		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3]; // TODO valor
-		// 2020-05-14 14:25:1  -  correspondente do timestamp
+		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3];
 		System.out.println(timestamp);
 		System.out.println(mensagem);
 		
@@ -142,36 +141,11 @@ public class CloudToMongo implements MqttCallback {
 		String valorDat = parsedMessage[2], valorTim = parsedMessage[3];
 		String valorCel = parsedMessage[4], valorMov = parsedMessage[5];
 		
-		/*String valorTmp = mensagem.substring(mensagem.indexOf("tmp"), mensagem.indexOf(",\"hum")).split(":")[1].replace("\"", "");
-		String valorHum = mensagem.substring(mensagem.indexOf("hum"), mensagem.indexOf(",\"dat")).split(":")[1].replace("\"", "");
-		String valorDat = mensagem.substring(mensagem.indexOf("dat"), mensagem.indexOf(",\"tim")).split(":")[1].replace("\"", "");
-		String valorTim = mensagem.substring(mensagem.indexOf("tim"), mensagem.indexOf(", mov")).split("\":\"")[1];//.replace("\"", ""); // tirei o /" antes do mov
-		String valorCel = 0+"";// mensagem.substring(mensagem.indexOf("cell"), mensagem.indexOf("\", mov")).split(":")[1].replace("\"", "");
-		String valorMov = mensagem.substring(mensagem.indexOf(" mov"), mensagem.indexOf("\", sens")).split(":")[1].replace("\"", "");*/
-		
 		Medicao m = new Medicao();
 		m.setDate(valorDat + " " + valorTim);
 		System.out.println("DATE SET: " + valorDat + " " + valorTim);
 
-		boolean dataValida = true; //FIXME temos actually validar as datas
-		/* ver se a data é maior do que da medicao anterior */
-//		Date data = new Date(Integer.parseInt(valorDat.split("/")[2]),Integer.parseInt(valorDat.split("/")[1]),
-//				Integer.parseInt(valorDat.split("/")[0]),Integer.parseInt(valorTim.split(":")[0]),
-//				Integer.parseInt(valorTim.split(":")[1]),Integer.parseInt(valorTim.split(":")[0]));
-//		
-//		String dataAnterior = medicoesAnteriores.peekLast().getDate();
-//		if(dataAnterior!=null) {
-//			String [] parsedAux = dataAnterior.split(" ");
-//			Date data2 = new Date(Integer.parseInt(parsedAux[0].split("/")[2]),Integer.parseInt(parsedAux[0].split("/")[1]),
-//					Integer.parseInt(parsedAux[0].split("/")[0]),Integer.parseInt(parsedAux[1].split(":")[0]),
-//					Integer.parseInt(parsedAux[1].split(":")[1]),Integer.parseInt(parsedAux[1].split(":")[2]));
-//		
-//			if(!data.after(data2)) {
-//				dataValida=false;
-//			}
-//		}
-
-		if (verify(valorTmp, 't', timestamp) && dataValida) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
+		if (verify(valorTmp, 't', timestamp) ) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
 			m.setMedicaoTemperatura("" + Double.parseDouble(valorTmp));
 			BasicDBObject document = new BasicDBObject();// não passar para cima por causa do ObjectId
 			document.put("TipoSensor", "TEM");
@@ -189,7 +163,7 @@ public class CloudToMongo implements MqttCallback {
 			mongocolerros.insert(document);
 		}
 
-		if (verify(valorHum, 'h', timestamp) && dataValida) {
+		if (verify(valorHum, 'h', timestamp) ) {
 			m.setMedicaoHumidade("" + Double.parseDouble(valorHum));
 			BasicDBObject document = new BasicDBObject();// não passar para cima por causa do ObjectId
 			document.put("TipoSensor", "HUM");
@@ -207,9 +181,7 @@ public class CloudToMongo implements MqttCallback {
 			mongocolerros.insert(document);
 		}
 
-		//Parse data :)
-
-		if (verify(valorCel, 'c', timestamp) && dataValida) {
+		if (verify(valorCel, 'c', timestamp) ) {
 			m.setMedicaoLuminosidade("" + Integer.parseInt(valorCel));
 			BasicDBObject document = new BasicDBObject();// não passar para cima por causa do ObjectId
 			document.put("TipoSensor", "CEL");
@@ -227,7 +199,7 @@ public class CloudToMongo implements MqttCallback {
 			mongocolerros.insert(document);
 		}
 
-		if (verify(valorMov, 'm', timestamp) && dataValida) {
+		if (verify(valorMov, 'm', timestamp) ) {
 			m.setMedicaoMovimento("" + Integer.parseInt(valorMov));
 			BasicDBObject document = new BasicDBObject();// não passar para cima por causa do ObjectId
 			document.put("TipoSensor", "MOV");

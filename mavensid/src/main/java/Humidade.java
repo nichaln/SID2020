@@ -29,7 +29,7 @@ public class Humidade {
 	public void processar(double num) {
 		double mediaAnterior = calcularMediaAnterior();
 		if (num >= limiteHumidade && contadorVermelho == 0) {
-			System.err.println("Alerta Vermelho - Muita húmido!!!");
+			System.err.println("Alerta Vermelho - Muito húmido!!!");
 			contact.writeAlertaToMySQL("HUM", num + "", limiteHumidade + "", "Humidade acima do limite", 1 + "", "");
 			contadorVermelho = ESPACAMENTO_ENTRE_ALERTAS;
 		} else {

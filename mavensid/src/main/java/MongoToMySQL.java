@@ -84,10 +84,6 @@ public class MongoToMySQL {
 		}
 		DBObject dboobject;
 		while (true) {
-//			DBCursor cursor = medicoes.find();
-
-//			while (cursor.hasNext()) {
-//				String read = cursor.next().toString();
 			dboobject = medicoes.findOne();
 			if (dboobject != null) {
 				String read = dboobject.toString();
@@ -119,7 +115,6 @@ public class MongoToMySQL {
 			} else {
 				Thread.sleep(2000);
 			}
-//			}
 		}
 	}
 
@@ -158,8 +153,6 @@ public class MongoToMySQL {
 					"Insert into alerta (ID, DataHoraMedicao, TipoSensor, ValorMedicao, Limite, Descricao, Controlo, Extra)"
 							+ " values (" + i++ + ", '" + dataHoraMedicao + "', '" + tipoSensor + "', "
 							+ valorMedicao + ", " + limite + ", \"" + descricao + "\", " + controlo + ", " + null + ");");
-
-			// ID DataHoraMedicao TipoSensor ValorMedicao Limite Descricao Controlo Extra
 		} catch (Exception e) {
 			System.out.println("Erro a escrever um alerta. " + e);
 		}
@@ -178,8 +171,6 @@ public class MongoToMySQL {
 		return false;
 	}
 	
-	
-	// Já funciona bué broooo
 	public void obterRondasPlaneadas() {
 		String SqlCommando = new String();
 		ResultSet rs;
