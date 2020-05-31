@@ -15,7 +15,32 @@ public class Movimento {
 	
 		
 	public void processar(Double num) {
-		if(num >= 1 && contador == 0 && !contact.verRondas()) {
+		if(num >= 1 && contador == 0/* && !contact.verRondas()*/) {
+			if(!contact.verRondas()) {
+				System.out.println("#################################################################");
+				System.out.println("#################################################################");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
+				System.out.println("#################################################################");
+				System.out.println("#################################################################");
+				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("NÃO ESCREVI PORQUE HAVIA RONDA");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("-----------------------------------------------------------------");
+				System.out.println("#################################################################");
+				System.out.println("#################################################################");
+				return;
+			}
 			System.err.println("Alerta Movimentos para xuxu!!!");
 			contact.writeAlertaToMySQL("MOV", num+"", 1+"", "Movimentos a acontecer", 1+"", "");
 			contador=ESPACAMENTO_ENTRE_ALERTAS;

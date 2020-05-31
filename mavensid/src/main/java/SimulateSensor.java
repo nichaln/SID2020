@@ -48,10 +48,11 @@ public class SimulateSensor implements MqttCallback
         final String s = new String();
         LocalDate.now();
         LocalTime.now();
-        //while (true) {
+        while (true) {
+        	System.out.println("Starting");
             double d = 18.0;
             while (d < 50.0) {
-                final String string = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 0 + "\",\"sens\":\"eth\"}";
+                final String string = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 1 + "\",\"sens\":\"eth\"}";
                 d += 0.5;
                 try {
                     Thread.sleep(2000L);
@@ -61,7 +62,7 @@ public class SimulateSensor implements MqttCallback
             }
             int i = 1;
             while (i < 10) {
-                final String string2 = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 0 + "\",\"sens\":\"eth\"}";
+                final String string2 = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 1 + "\",\"sens\":\"eth\"}";
                 ++i;
                 try {
                     Thread.sleep(2000L);
@@ -70,7 +71,7 @@ public class SimulateSensor implements MqttCallback
                 this.publishSensor(string2);
             }
             while (d > 18.0) {
-                final String string3 = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 0 + "\",\"sens\":\"eth\"}";
+                final String string3 = "{\"tmp\":\"" + d + "\",\"hum\":\"" + 35.0 + "\",\"dat\":\"" + LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\",\"tim\":\"" + LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")) + "\",\"cell\":\"" + 20 + "\",\"mov\":\"" + 1 + "\",\"sens\":\"eth\"}";
                 d -= 1.5;
                 try {
                     Thread.sleep(2000L);
@@ -150,7 +151,7 @@ public class SimulateSensor implements MqttCallback
             }
             catch (InterruptedException ex15) {}
             this.publishSensor(string15);
-        //}
+        }
     }
     
     public void publishSensor(final String s) {
