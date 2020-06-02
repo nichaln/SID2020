@@ -90,8 +90,8 @@ public class CloudToMongo implements MqttCallback {
 	}
 
 	public void connectMongo() {
-		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
-//		mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
+//		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
+		mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
 		db = mongoClient.getDB(mongo_database);
 		mongocolmedicoes = db.getCollection(mongo_collection_medicoes);
 		mongocolerros = db.getCollection(mongo_collection_erros);
