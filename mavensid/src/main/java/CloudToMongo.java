@@ -48,7 +48,7 @@ public class CloudToMongo implements MqttCallback {
 	private int errosRajadaHum;
 	private int errosRajadaLum;
 
-	private boolean startup = true, testing = true;
+	private boolean startup = true, testing = false;
 
 	public static void main(String[] args) {
 
@@ -127,23 +127,35 @@ public class CloudToMongo implements MqttCallback {
 
 	public void receberMensagem(String mensagem) {
 		String[] vetor = mensagem.split(",");
-		String[] parsed = new String[vetor.length];
-		for (int i = 0; i != vetor.length; i++) {
-			parsed[i] = vetor[i].split("\":\"")[1].replaceAll("\"", "");
-		}
-		String[] auxTime = parsed[2].split("/");
-		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3];
-		System.out.println(timestamp);
 		System.out.println(mensagem);
+		for (String string : vetor) {
+			System.out.println(string);
+		}
+		String[] parsed = new String[7];
+		int i = 0;
+		for (int j = 0; j != vetor.length; j++) {
+			if(vetor[j].contains(":")) {
+				parsed[i] = vetor[j].split("\"*\\s*:\\s*\"*")[1].replaceAll("\"", "");
+				i++;
+			}
+		}
+		//String[] auxTime = parsed[2].split("/");
+		//String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + parsed[3];
+		//System.out.println(timestamp);
+		//System.out.println(mensagem);
 		
 		String[] parsedMessage = parseMessage(mensagem);		
 		String valorTmp = parsedMessage[0], valorHum = parsedMessage[1];
 		String valorDat = parsedMessage[2], valorTim = parsedMessage[3];
 		String valorCel = parsedMessage[4], valorMov = parsedMessage[5];
+		String[] auxTime = valorDat.split("/");
+		String timestamp = auxTime[2] + "-" + auxTime[1] + "-" + auxTime[0] + " " + valorTim;
+		System.out.println(timestamp);
+		
 		
 		Medicao m = new Medicao();
 		m.setDate(valorDat + " " + valorTim);
-		System.out.println("DATE SET: " + valorDat + " " + valorTim);
+		//System.out.println("DATE SET: " + valorDat + " " + valorTim);
 
 		if (verify(valorTmp, 't', timestamp) ) {// se correu tudo bem, escreve na medicoessensores e atualiza o vetor
 			m.setMedicaoTemperatura("" + Double.parseDouble(valorTmp));
@@ -235,11 +247,11 @@ public class CloudToMongo implements MqttCallback {
 		String[][] auxiliar = new String[messageArray.length][2];
 		for (int i = 0; i != messageArray.length; i++) {
 			//System.out.println(messageArray[i]);
-			auxiliar[i] = messageArray[i].split("\":\"");
+			auxiliar[i] = messageArray[i].split("\"\\s*:\\s*\"");
 		}
 		System.out.println("-------------------------------");
 		for (int i = 0; i != auxiliar.length; i++) {
-			System.out.println(auxiliar[i][0] + " " + auxiliar[i][1]);
+			//System.out.println(auxiliar[i][0] + " " + auxiliar[i][1]);
 			if (auxiliar[i][0].contains("tmp"))
 				parsedMessage[0] = auxiliar[i][1];
 			if (auxiliar[i][0].contains("hum"))

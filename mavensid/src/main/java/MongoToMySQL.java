@@ -68,7 +68,7 @@ public class MongoToMySQL {
 
 	}
 
-	public void readFromMongo() throws InterruptedException {
+	public void readFromMongo(){
 		String SqlCommando = new String();
 		ResultSet rs;
 		int i=0;
@@ -113,7 +113,11 @@ public class MongoToMySQL {
 				}
 				medicoes.remove(dboobject);
 			} else {
-				Thread.sleep(2000);
+				try {
+					Thread.sleep(2000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}
