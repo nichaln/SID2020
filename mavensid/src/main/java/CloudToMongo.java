@@ -90,8 +90,8 @@ public class CloudToMongo implements MqttCallback {
 	}
 
 	public void connectMongo() {
-//		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
-		mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
+		mongoClient = new MongoClient(new MongoClientURI(mongo_host));
+//		mongoClient = new MongoClient(Arrays.asList(new ServerAddress("localhost",27017),new ServerAddress("localhost",25017), new ServerAddress("localhost",23017)));
 		db = mongoClient.getDB(mongo_database);
 		mongocolmedicoes = db.getCollection(mongo_collection_medicoes);
 		mongocolerros = db.getCollection(mongo_collection_erros);
@@ -163,6 +163,11 @@ public class CloudToMongo implements MqttCallback {
 			document.put("TipoSensor", "TEM");
 			document.put("ValorMedicao", Double.parseDouble(valorTmp));
 			document.put("DataHoraMedicao", timestamp);
+			if(mongocolmedicoes == null) {
+				try {
+					Thread.sleep(2000);
+				} catch (Exception e) {}
+			}
 			mongocolmedicoes.insert(document);
 		} else { // ser string ou valor elevado
 			m.setMedicaoTemperatura(valorTmp);
@@ -172,6 +177,11 @@ public class CloudToMongo implements MqttCallback {
 			document.put("DataHoraMedicao", timestamp);
 			ArrayList<DBObject> array = historyTemperatura();
 			document.put("ValoresAnteriores", array);
+			if(mongocolerros == null) {
+				try {
+					Thread.sleep(2000);
+				} catch (Exception e) {}
+			}
 			mongocolerros.insert(document);
 		}
 
